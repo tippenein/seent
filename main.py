@@ -19,7 +19,7 @@ channel_username = PeerChannel(2015897529)
 
 async def fetch_messages(client, channel, limit=500, delay=1):
     messages = []
-    offset_id = 0  # Start with no offset
+    offset_id = 0
     while len(messages) < limit:
         # Fetch a batch of messages
         batch = await client.get_messages(channel, limit=min(100, limit - len(messages)), offset_id=offset_id)
@@ -140,7 +140,7 @@ def insert(conn, data, date, id):
                 :id, :date, :token, :name, :price, :marketcap, :volume_24h, :ai_degen, :top_20_holders,
                 :total_holders, :transactions, :price_change_5min
             )
-            ''', {'id': id, 'date': date_str, **data})
+            ''', {'id': id, 'date': date, **data})
 
             # Commit the changes if the insert was successful
             conn.commit()
@@ -173,7 +173,7 @@ async def main():
     channel = await client.get_entity(channel_username)
 
     # arbitrary limit of 1000
-    messages = await fetch_messages(client, channel, limit=1000, delay=1)
+    messages = await fetch_messages(client, channel, limit=30, delay=1)
 
     # Print the messages
     for message in messages:
