@@ -1,0 +1,5 @@
+venv/
+*.sesson
+*.session
+seent.db
+.env
