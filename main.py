@@ -144,12 +144,15 @@ def insert(conn, data, date, id):
 
             # Commit the changes if the insert was successful
             conn.commit()
+            return 1
         else:
             print(f"Entry with ID {id} already exists. Skipping insert.")
+            return 0
     except sqlite3.Error as e:
         # If an error occurs, rollback the transaction
         conn.rollback()
         print(f"An error occurred: {e}")
+        return 0
     finally:
         # Close the cursor
         cursor.close()
@@ -175,17 +178,18 @@ async def main():
     # arbitrary limit of 1000
     messages = await fetch_messages(client, channel, limit=30, delay=1)
 
-    # Print the messages
+    count = 0
     for message in messages:
         id = message.id
         date = message.date
         date_str = date.strftime('%Y-%m-%d %H:%M:%S')
         token_data = parse_token_data(message.message) if message.message else None
         if token_data:
-            insert(conn, token_data, date_str, id)
+            count += insert(conn, token_data, date_str, id)
         else:
             print(f"An error occurred for message {id} at {date_str}")
 
+    print(f"Added {count} new calls")
     conn.close()
 
 with client:
