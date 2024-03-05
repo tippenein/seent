@@ -3,3 +3,4 @@ venv/
 *.session
 seent.db
 .env
+*.bak

@@ -21,3 +21,8 @@ An example query you might call on to find the green calls and when they were ca
 ```sql
 SELECT name || ': ' || strftime('%m-%d %H:%M:%S', date) AS formatted_name_date FROM token_data WHERE ai_degen = 'green' GROUP BY name, date ORDER BY date ASC;
 ```
+
+
+```sql
+SELECT * from token_data where name LIKE '%WADDUP%';
+```
