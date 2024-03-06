@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Seent</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        table {
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+    </style>
+
+</head>
+<body>
+    <form action="/tokens" method="get">
+        <input type="text" name="query" placeholder="Search for tokens...">
+        <input type="submit" value="Search">
+    </form>
+    {% if tokens %}
+    <table id="tokenTable">
+        <thead>
+            <tr>
+                <th><a href="?sort_by=name&sort_order={{ 'desc' if sort_by == 'name' and sort_order == 'asc' else 'asc' }}">Name</a></th>
+                <th><a href="?sort_by=date&sort_order={{ 'desc' if sort_by == 'date' and sort_order == 'asc' else 'asc' }}">Date</a></th>
+                <th>Token</th>
+                <th><a href="?sort_by=price&sort_order={{ 'desc' if sort_by == 'price' and sort_order == 'asc' else 'asc' }}">Price</a></th>
+                <th><a href="?sort_by=marketcap&sort_order={{ 'desc' if sort_by == 'marketcap' and sort_order == 'asc' else 'asc' }}">Marketcap</a></th>
+                <th><a href="?sort_by=volume_24h&sort_order={{ 'desc' if sort_by == 'volume_24h' and sort_order == 'asc' else 'asc' }}">Volume 24h</a></th>
+                <th>Degen score</th>
+                <th><a href="?sort_by=top_20_holders&sort_order={{ 'desc' if sort_by == 'top_20_holders' and sort_order == 'asc' else 'asc' }}">Top 20 holders</a></th>
+                <th><a href="?sort_by=total_holders&sort_order={{ 'desc' if sort_by == 'total_holders' and sort_order == 'asc' else 'asc' }}">Total hodlers</a></th>
+                <th><a href="?sort_by=transactions&sort_order={{ 'desc' if sort_by == 'transactions' and sort_order == 'asc' else 'asc' }}">Transactions</a></th>
+                <th><a href="?sort_by=price_change_5min&sort_order={{ 'desc' if sort_by == 'price_change_5min' and sort_order == 'asc' else 'asc' }}">Price change 5min</a></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for token in tokens %}
+                <tr>
+                    <td>{{ token.name }}</td>
+                    <td>{{ token.date }}</td>
+                    <td>
+                        <a href="https://birdeye.so/token/{{ token.token }}?chain=solana" target="_blank">{{ token.token }}</a>
+                    </td>
+                    <td>{{ token.price }}</td>
+                    <td>{{ token.marketcap }}</td>
+                    <td>{{ token.volume_24h }}</td>
+                    <td>{{ token.ai_degen }}</td>
+                    <td>{{ token.top_20_holders }}</td>
+                    <td>{{ token.total_holders }}</td>
+                    <td>{{ token.transactions }}</td>
+                    <td>{{ token.price_change_5min }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>No tokens found.</p>
+    {% endif %}
+</body>
+</html>
