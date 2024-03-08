@@ -1,11 +1,14 @@
 from telethon import TelegramClient, events, sync
 from telethon.tl.types import PeerChannel
 import sqlite3
+from sqlite3 import Error
 from datetime import datetime
+import json
 import re
 import time
 import asyncio
 from dotenv import load_dotenv
+import requests
 import os
 
 load_dotenv()
@@ -15,7 +18,86 @@ api_id = os.getenv('API_ID')
 api_hash = os.getenv('API_HASH')
 phone = os.getenv('PHONE')
 channel_username = PeerChannel(2015897529)
+ticker_endpoint_url = 'https://stats.jup.ag/coingecko/tickers'
+DB_FILE = 'seent.db'
 
+def create_connection(db_file):
+    """Create a database connection to the SQLite database specified by db_file"""
+    conn = None
+    try:
+        conn = sqlite3.connect(db_file)
+        return conn
+    except Error as e:
+        print(e)
+    return conn
+
+def create_table(conn, create_table_sql):
+    """Create a table from the create_table_sql statement"""
+    try:
+        c = conn.cursor()
+        c.execute(create_table_sql)
+    except Error as e:
+        print(e)
+
+def insert_json_blob(conn, json_blob):
+    """Insert JSON blob into the json_data table"""
+    sql = ''' INSERT INTO json_data(json_blob) VALUES(?) '''
+    cur = conn.cursor()
+    j = json.dumps(json_blob)
+    cur.execute(sql, (j,))
+    conn.commit()
+    return cur.lastrowid
+
+def index_by_ticker_id(ticker_data_list):
+    """
+    Converts a list of dictionaries into a dictionary indexed by 'ticker_id'.
+
+    :param ticker_data_list: List of dictionaries, each containing a 'ticker_id' key.
+    :return: Dictionary indexed by 'ticker_id'.
+    """
+    ticker_data_dict = {}
+    for item in ticker_data_list:
+        # Copy the item dictionary to avoid modifying the original list
+        item_data = item.copy()
+        # Extract the ticker_id and use it as the key for the new dictionary
+        ticker_id = item_data.pop('ticker_id', None)
+        if ticker_id is not None:
+            # Use the ticker_id as the key and the remaining data as the value
+            ticker_data_dict[ticker_id] = item_data
+    return ticker_data_dict
+
+
+
+def query_and_store_json_blob(endpoint):
+    # Step 1: Query the endpoint for JSON
+    response = requests.get(endpoint)
+    if response.status_code != 200:
+        print('Failed to retrieve data: Status code', response.status_code)
+        return
+
+    # Step 2: Convert the JSON data to a string
+    json_blob = response.text
+
+    # Define the SQLite table structure
+    sql_create_json_table = """ CREATE TABLE IF NOT EXISTS json_data (
+                                        id integer PRIMARY KEY,
+                                        json_blob text NOT NULL
+                                    ); """
+
+    indexed_ticker_data = index_by_ticker_id(json.loads(json_blob))
+    # Step 3: Create a database connection
+    conn = create_connection(DB_FILE)
+    if conn is not None:
+        # Create json_data table
+        create_table(conn, sql_create_json_table)
+
+        # Step 4: Insert the JSON blob into the SQLite database
+        insert_json_blob(conn, indexed_ticker_data)
+
+        # Close the connection
+        conn.close()
+    else:
+        print("Error! Cannot create the database connection.")
 
 async def fetch_messages(client, channel, limit=500, delay=1):
     messages = []
@@ -158,7 +240,7 @@ def insert(conn, data, date, id):
         cursor.close()
 
 async def main():
-    conn = sqlite3.connect('seent.db')
+    conn = sqlite3.connect(DB_FILE)
     setup_db(conn)
     # Connect to the client
     await client.start()
@@ -176,7 +258,7 @@ async def main():
     channel = await client.get_entity(channel_username)
 
     # arbitrary limit of 1000
-    messages = await fetch_messages(client, channel, limit=30, delay=1)
+    messages = await fetch_messages(client, channel, limit=50, delay=1)
 
     count = 0
     for message in messages:
@@ -190,7 +272,10 @@ async def main():
             print(f"An error occurred for message {id} at {date_str}")
 
     print(f"Added {count} new calls")
+    print("adding current ticker data")
+    query_and_store_json_blob(ticker_endpoint_url)
     conn.close()
 
 with client:
     client.loop.run_until_complete(main())
+

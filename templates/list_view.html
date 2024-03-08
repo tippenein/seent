@@ -53,6 +53,7 @@
                 <th><a href="?sort_by=date&sort_order={{ 'desc' if sort_by == 'date' and sort_order == 'asc' else 'asc' }}">Date</a></th>
                 <th>Token</th>
                 <th><a href="?sort_by=price&sort_order={{ 'desc' if sort_by == 'price' and sort_order == 'asc' else 'asc' }}">Price</a></th>
+                <th>Current price</th>
                 <th><a href="?sort_by=marketcap&sort_order={{ 'desc' if sort_by == 'marketcap' and sort_order == 'asc' else 'asc' }}">Marketcap</a></th>
                 <th><a href="?sort_by=volume_24h&sort_order={{ 'desc' if sort_by == 'volume_24h' and sort_order == 'asc' else 'asc' }}">Volume 24h</a></th>
                 <th><a href="?sort_by=top_20_holders&sort_order={{ 'desc' if sort_by == 'top_20_holders' and sort_order == 'asc' else 'asc' }}">Top 20 holders</a></th>
@@ -70,7 +71,8 @@
                     <td>
                         <a href="https://birdeye.so/token/{{ token.token }}?chain=solana" target="_blank">Birdeye</a>
                     </td>
-                    <td>{{ token.price }}</td>
+		    <td style="{{ 'color: green;' if token.price < floatConv(ticker_data.get(token.token, {}).get('last_price', 0)) else 'color: red;' }}">{{ token.price }}</td>
+                    <td>{{ ticker_data.get(token.token, {}).get('last_price', 'N/A')}}</td>
                     <td>{{ token.marketcap }}</td>
                     <td>{{ token.volume_24h }}</td>
                     <td>{{ token.top_20_holders }}</td>
