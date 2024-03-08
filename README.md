@@ -13,9 +13,18 @@ cp .env.example .env
 Then fill in you api id/hash from my.telegram.com along with your phone number
 
 ```python
-python3 main.py
+# this fetches the telegram history
+python runner.py
 ```
 
+```
+python app.py
+```
+
+after you have the db, you can run the app and open it at http://127.0.0.1/
+
+
+# DB
 An example query you might call on to find the green calls and when they were called
 
 ```sql
