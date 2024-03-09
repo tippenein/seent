@@ -57,6 +57,7 @@ def parse_token_data(raw_text):
     price_pattern = re.compile(r'Price: ([\d.]+)')
     marketcap_pattern = re.compile(r'Latest Marketcap: ([\d.]+[kmb]?)')
     volume_pattern = re.compile(r'Volume 24h: ([\d.]+[kmb]?)')
+    memeability_pattern = re.compile(r'Memeability: ([\d.]+)')
     ai_degen_pattern = re.compile(r'AI Degen: (\S+)')
     top_holders_pattern = re.compile(r'Top 20 Holders: ([\d.]+)')
     total_holders_pattern = re.compile(r'Total Holders: (\d+)')
@@ -65,6 +66,9 @@ def parse_token_data(raw_text):
     data = {}
     marketcap_match = marketcap_pattern.search(raw_text)
     data['marketcap'] = marketcap_match.group(1) if marketcap_match else None
+
+    memeability_match = memeability_pattern.search(raw_text)
+    data['memeability'] = memeability_match.group(1) if memeability_match else None
 
     volume_24h_match = volume_pattern.search(raw_text)
     data['volume_24h'] = volume_24h_match.group(1) if volume_24h_match else None
@@ -109,6 +113,7 @@ def setup_db(conn):
             name TEXT,
             price REAL,
             marketcap TEXT,
+            memeability REAL,
             volume_24h TEXT,
             ai_degen TEXT,
             top_20_holders REAL,
@@ -134,10 +139,10 @@ def insert(conn, data, date, id):
         if not exists:
             cursor.execute('''
             INSERT INTO token_data (
-                id, date, token, name, price, marketcap, volume_24h, ai_degen, top_20_holders,
+                id, date, token, name, price, marketcap, memeability, volume_24h, ai_degen, top_20_holders,
                 total_holders, transactions, price_change_5min
             ) VALUES (
-                :id, :date, :token, :name, :price, :marketcap, :volume_24h, :ai_degen, :top_20_holders,
+                :id, :date, :token, :name, :price, :marketcap, :memeability, :volume_24h, :ai_degen, :top_20_holders,
                 :total_holders, :transactions, :price_change_5min
             )
             ''', {'id': id, 'date': date, **data})
@@ -176,7 +181,7 @@ async def main():
     channel = await client.get_entity(channel_username)
 
     # arbitrary limit of 1000
-    messages = await fetch_messages(client, channel, limit=30, delay=1)
+    messages = await fetch_messages(client, channel, limit=50, delay=1)
 
     count = 0
     for message in messages:
