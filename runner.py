@@ -181,7 +181,7 @@ async def main():
     channel = await client.get_entity(channel_username)
 
     # arbitrary limit of 1000
-    messages = await fetch_messages(client, channel, limit=50, delay=1)
+    messages = await fetch_messages(client, channel, limit=100, delay=1)
 
     count = 0
     for message in messages:

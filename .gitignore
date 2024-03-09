@@ -4,3 +4,5 @@ venv/
 seent.db
 .env
 *.bak
+/backups/*
+!/backups/.keep
