@@ -6,3 +6,4 @@ seent.db
 *.bak
 /backups/*
 !/backups/.keep
+.vercel

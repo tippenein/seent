@@ -1,9 +1,13 @@
 from flask import Flask, redirect, request, url_for, render_template
+from flask_socketio import SocketIO
 import sqlite3
+import os
 
 app = Flask(__name__)
 
 DATABASE = './seent.db'
+DEBUG=False
+socketio = SocketIO(app)
 
 def get_db_connection():
     conn = sqlite3.connect(DATABASE)
@@ -41,4 +45,5 @@ def get_tokens():
     return render_template('list_view.html', tokens=tokens, sort_by=sort_by, sort_order=sort_order)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    socketio.run(app, host='0.0.0.0', port=port, debug=DEBUG)
