@@ -8,3 +8,5 @@ seent.db
 !/backups/.keep
 .vercel
 dump.sql
+*.pyc
+src/__pycache__

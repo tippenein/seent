@@ -66,7 +66,7 @@
             {% for token in tokens %}
                 <tr>
                     <td class="degen">{{ token.ai_degen }}</td>
-                    <td>{{ token.name }}</td>
+                    <td><a href="{{ url_for('token_detail', token=token.token) }}">{{ token.name }}</a></td>
                     <td>{{ token.date }}</td>
                     <td>
                         <a href="https://birdeye.so/token/{{ token.token }}?chain=solana" target="_blank">Birdeye</a>
