@@ -1,6 +1,6 @@
 DB_NAME:=seent.db
 dump:
-	sqlite3 "${DB_NAME}" ".output token_data.sql" ".dump token_data"
+	sqlite3 seent.db .dump > dump.sql
 
 backup:
 	./backup.sh
