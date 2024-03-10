@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <style>
+        .back-button {
+            padding: 10px 20px;
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <a href="{{ url_for('get_tokens') }}" class="back-button">&larr; Back</a>
+
+    <h1>{{ token }} OHLC Plot</h1>
+
+    <img src="data:image/png;base64,{{ image }}" alt="{{ token }} OHLC Plot">
+</body>
+</html>

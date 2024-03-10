@@ -1,4 +1,4 @@
-from telethon import TelegramClient, events, sync
+from telethon import TelegramClient
 from telethon.tl.types import PeerChannel
 import sqlite3
 from datetime import datetime
@@ -174,7 +174,7 @@ async def main():
         await client.send_code_request(phone)
         try:
             await client.sign_in(phone, input('Enter the code: '))
-        except SessionPasswordNeededError:
+        except:
             await client.sign_in(password=input('Password: '))
 
     # Access the channel
