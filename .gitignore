@@ -10,3 +10,5 @@ seent.db
 dump.sql
 *.pyc
 src/__pycache__
+.env.*
+postgres_ready_dump.sql

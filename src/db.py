@@ -43,6 +43,7 @@ class DatabaseController:
             conn.row_factory = sqlite3.Row
             return conn
         elif self.db_type == 'postgres':
+            print(self.config)
             conn = psycopg2.connect(
                 dbname=self.config['DATABASE'],
                 user=self.config['USER'],
