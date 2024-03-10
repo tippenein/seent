@@ -5,20 +5,19 @@ import os
 import pandas as pd
 from datetime import datetime
 import matplotlib.pyplot as plt
-import src.plot as plot
+from .plot import datetime_to_epoch, get_solana_pool_address, plot_ohlc_data
 import io
+from .db import DATABASE_CONFIG, DATABASE_TYPE, DatabaseController
 import base64
+
 
 app = Flask(__name__)
 
-DATABASE = './seent.db'
+
 DEBUG=False
 socketio = SocketIO(app)
 
-def get_db_connection():
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
-    return conn
+db = DatabaseController(DATABASE_CONFIG[DATABASE_TYPE], DATABASE_TYPE)
 
 @app.route('/')
 def home():
@@ -51,19 +50,11 @@ def get_tokens():
     sort_order = request.args.get('sort_order', 'asc')
     offset = (page - 1) * per_page
 
-    conn = get_db_connection()
-    cur = conn.cursor()
-
     if search_query:
-        cur.execute(f"SELECT * FROM token_data WHERE name LIKE ? ORDER BY {sort_by} {sort_order}", ('%' + search_query + '%',))
+        tokens = db.query_db(f"SELECT * FROM token_data WHERE name LIKE ? ORDER BY {sort_by} {sort_order}", ('%' + search_query + '%',))
     else:
-        cur.execute(f'SELECT * FROM token_data ORDER BY {sort_by} {sort_order} LIMIT ? OFFSET ?', (per_page, offset))
+        tokens =  db.query_db(f'SELECT * FROM token_data ORDER BY {sort_by} {sort_order} LIMIT ? OFFSET ?', (per_page, offset))
 
-    rows = cur.fetchall()
-    tokens = [dict(row) for row in rows]
-
-    cur.close()
-    conn.close()
 
     return render_template('list_view.html', tokens=tokens, sort_by=sort_by, sort_order=sort_order)
 
@@ -71,11 +62,11 @@ def get_tokens():
 def token_detail(token):
     date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    bot_timestamp = int(plot.datetime_to_epoch(date) - 18000*2)
+    bot_timestamp = int(datetime_to_epoch(date) - 18000*2)
     print("fetching plot data")
-    pool_address = plot.get_solana_pool_address(token)
+    pool_address = get_solana_pool_address(token)
     print("asdf")
-    image = plot.plot_ohlc_data(pool_address, bot_timestamp)
+    image = plot_ohlc_data(pool_address, bot_timestamp)
     print("fetched plot data")
     if image is not None:
         # Encode the image bytes to base64
