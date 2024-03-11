@@ -13,3 +13,6 @@ create: backup scrape
 
 scrape:
 	./run.sh
+
+test:
+	python3 -m unittest test_parser.py

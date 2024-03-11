@@ -6,7 +6,7 @@ import re
 import time
 import asyncio
 from dotenv import load_dotenv
-from .parser import parse_token_data
+from seer_parser import parse_token_data
 import os
 
 load_dotenv()
