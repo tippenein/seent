@@ -6,13 +6,13 @@ backup:
 	./backup.sh
 
 run:
-	python3 app.py
+	./run.sh
 
 create: backup scrape
 	
 
 scrape:
-	./run.sh
+	./scrape.sh
 
 test:
 	python3 -m unittest test_parser.py

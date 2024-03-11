@@ -65,9 +65,7 @@ def token_detail(token):
     bot_timestamp = int(datetime_to_epoch(date) - 18000*2)
     print("fetching plot data")
     pool_address = get_solana_pool_address(token)
-    print("asdf")
     image = plot_ohlc_data(pool_address, bot_timestamp)
-    print("fetched plot data")
     if image is not None:
         # Encode the image bytes to base64
         image_base64 = base64.b64encode(image).decode('utf-8')
