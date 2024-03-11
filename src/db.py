@@ -7,10 +7,10 @@ from psycopg2.extras import RealDictCursor
 load_dotenv()
 
 VERCEL_ENV = os.getenv('VERCEL_ENV')
-POSTGRES_DBNAME = os.getenv('POSTGRES_DBNAME')
-POSTGRES_USER = os.getenv('POSTGRES_USER')
-POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
-POSTGRES_HOST = os.getenv('POSTGRES_HOST') or 'localhost'
+POSTGRES_DBNAME = os.getenv('VERCEL_POSTGRES_DBNAME')
+POSTGRES_USER = os.getenv('VERCEL_POSTGRES_USER')
+POSTGRES_PASSWORD = os.getenv('VERCEL_POSTGRES_PASSWORD')
+POSTGRES_HOST = os.getenv('VERCEL_POSTGRES_HOST')
 
 DATABASE_CONFIG = {
     'sqlite': {
@@ -27,10 +27,10 @@ DATABASE_CONFIG = {
 
 # Choose the database type here ('sqlite' or 'postgres')
 def get_database_type():
-  if VERCEL_ENV == 'production':
-    return 'postgres'
-  else:
+  if VERCEL_ENV == 'dev':
     return 'sqlite'
+  else:
+    return 'postgres'
 
 class DatabaseController:
     def __init__(self, config, db_type):
