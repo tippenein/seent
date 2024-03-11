@@ -6,6 +6,7 @@ import re
 import time
 import asyncio
 from dotenv import load_dotenv
+from .parser import parse_token_data
 import os
 
 load_dotenv()
@@ -37,68 +38,6 @@ async def fetch_messages(client, channel, limit=500, delay=1):
 
     return messages
 
-def degen_color(emoji):
-    if emoji:
-        # Convert the Unicode emoji to the color name
-        if emoji == '🔴':
-            return 'red'
-        elif emoji == '🟡':
-            return 'yellow'
-        elif emoji == '🟢':
-            return 'green'
-        else:
-            return 'unknown'  # Default case if the emoji is not recognized
-    else:
-        return None
-
-def parse_token_data(raw_text):
-    token_pattern = re.compile(r'Token: ([-\w.]+)')
-    name_pattern = re.compile(r'Name: ([-\$\w./]+)')
-    price_pattern = re.compile(r'Price: ([\d.]+)')
-    marketcap_pattern = re.compile(r'Latest Marketcap: ([\d.]+[kmb]?)')
-    volume_pattern = re.compile(r'Volume 24h: ([\d.]+[kmb]?)')
-    memeability_pattern = re.compile(r'Memeability: ([\d.]+)')
-    ai_degen_pattern = re.compile(r'AI Degen: (\S+)')
-    top_holders_pattern = re.compile(r'Top 20 Holders: ([\d.]+)')
-    total_holders_pattern = re.compile(r'Total Holders: (\d+)')
-    transactions_pattern = re.compile(r'Transactions: (\d+)')
-    price_change_pattern = re.compile(r'PriceChange 5min: ([\d.]+)')
-    data = {}
-    marketcap_match = marketcap_pattern.search(raw_text)
-    data['marketcap'] = marketcap_match.group(1) if marketcap_match else None
-
-    memeability_match = memeability_pattern.search(raw_text)
-    data['memeability'] = memeability_match.group(1) if memeability_match else None
-
-    volume_24h_match = volume_pattern.search(raw_text)
-    data['volume_24h'] = volume_24h_match.group(1) if volume_24h_match else None
-
-    ai_degen_match = ai_degen_pattern.search(raw_text)
-    data['ai_degen'] = degen_color(ai_degen_match.group(1)) if ai_degen_match else None
-    # Search for matches in the raw text
-    token_match = token_pattern.search(raw_text)
-    data['token'] = token_match.group(1) if token_match else None
-
-    name_match = name_pattern.search(raw_text)
-    data['name'] = name_match.group(1) if name_match else None
-
-    price_match = price_pattern.search(raw_text)
-    data['price'] = float(price_match.group(1)) if price_match else None
-
-    top_20_holders_match = top_holders_pattern.search(raw_text)
-    data['top_20_holders'] = float(top_20_holders_match.group(1)) if top_20_holders_match else 0.0
-
-    total_holders_match = total_holders_pattern.search(raw_text)
-    data['total_holders'] = int(total_holders_match.group(1)) if total_holders_match else 0
-
-    transactions_match = transactions_pattern.search(raw_text)
-    data['transactions'] = int(transactions_match.group(1)) if transactions_match else 0
-
-    price_change_5min_match = price_change_pattern.search(raw_text)
-    data['price_change_5min'] = float(price_change_5min_match.group(1)) if price_change_5min_match else 0.0
-
-
-    return data
 
 # Create the client and connect
 client = TelegramClient('session_name', api_id, api_hash)

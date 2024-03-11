@@ -1,7 +1,6 @@
 venv/
 *.sesson
 *.session
-seent.db
 .env
 *.bak
 /backups/*
