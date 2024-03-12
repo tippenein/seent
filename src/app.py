@@ -5,9 +5,9 @@ import os
 import pandas as pd
 from datetime import datetime
 import matplotlib.pyplot as plt
-from .plot import datetime_to_epoch, get_solana_pool_address, plot_ohlc_data
+from plot import datetime_to_epoch, get_solana_pool_address, plot_ohlc_data
 import io
-from .db import DATABASE_CONFIG, DATABASE_TYPE, DatabaseController
+from db import DATABASE_CONFIG, DATABASE_TYPE, DatabaseController
 import base64
 
 
