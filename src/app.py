@@ -58,21 +58,21 @@ def get_tokens():
 
     return render_template('list_view.html', tokens=tokens, sort_by=sort_by, sort_order=sort_order)
 
-@app.route('/tokens/<token>')
-def token_detail(token):
-    date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    bot_timestamp = int(datetime_to_epoch(date) - 18000*2)
-    print("fetching plot data")
-    pool_address = get_solana_pool_address(token)
-    image = plot_ohlc_data(pool_address, bot_timestamp)
-    if image is not None:
-        # Encode the image bytes to base64
-        image_base64 = base64.b64encode(image).decode('utf-8')
-        return render_template('plot.html', token=token, image=image_base64)
-    else:
-        print("shit")
-        return "Could not generate plot", 404
+# @app.route('/tokens/<token>')
+# def token_detail(token):
+#     date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+# 
+#     bot_timestamp = int(datetime_to_epoch(date) - 18000*2)
+#     print("fetching plot data")
+#     pool_address = get_solana_pool_address(token)
+#     image = plot_ohlc_data(pool_address, bot_timestamp)
+#     if image is not None:
+#         # Encode the image bytes to base64
+#         image_base64 = base64.b64encode(image).decode('utf-8')
+#         return render_template('plot.html', token=token, image=image_base64)
+#     else:
+#         print("shit")
+#         return "Could not generate plot", 404
 
 
 
