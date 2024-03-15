@@ -15,11 +15,13 @@ socketio = SocketIO(app)
 
 db = DatabaseController(DATABASE_CONFIG[DATABASE_TYPE], DATABASE_TYPE)
 
+@app.route('/health')
+def health():
+    return jsonify(healthy=True)
+
 @app.route('/')
 def home():
-    return jsonify(healthy=True)
-# def home():
-#     return redirect(url_for('get_tokens'))
+    return redirect(url_for('get_tokens'))
 
 # @app.route('/all')
 # def top():
@@ -43,7 +45,7 @@ def get_tokens():
     search_query = request.args.get('query', '')
 
     page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 50, type=int)
+    per_page = request.args.get('per_page', 12, type=int)
     sort_by = request.args.get('sort_by', 'date')
     sort_order = request.args.get('sort_order', 'asc')
     offset = (page - 1) * per_page
