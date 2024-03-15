@@ -16,3 +16,8 @@ scrape:
 
 test:
 	python3 -m unittest test_parser.py
+
+db: backup dump push
+
+push:
+	./push.sh

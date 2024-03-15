@@ -6,6 +6,12 @@
   "routes": [
     { "src": "/(.*)", "dest": "/src/app.py" }
   ],
+  "functions": {
+    "src/**": {
+      "memory": 3008,
+      "maxDuration": 300
+    }
+  },
   "env": {
     "PYTHONPATH": "src/"
   }
