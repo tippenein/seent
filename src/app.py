@@ -51,7 +51,7 @@ def get_tokens():
     offset = (page - 1) * per_page
 
     if search_query:
-        query = f"SELECT * FROM token_data WHERE name LIKE %(search_query)s {sort_by}"
+        query = f"SELECT * FROM token_data WHERE name LIKE %(search_query)s"
         parameters = {'search_query': '%' + search_query + '%'}
     else:
         query = f"SELECT * FROM token_data {sort_by} LIMIT %(limit)s OFFSET %(offset)s"
