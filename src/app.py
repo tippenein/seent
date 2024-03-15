@@ -2,13 +2,9 @@ from flask import Flask, redirect, request, url_for, render_template, send_file
 from flask_socketio import SocketIO
 import sqlite3
 import os
-import pandas as pd
 from datetime import datetime
-import matplotlib.pyplot as plt
 # from plot import datetime_to_epoch, get_solana_pool_address, plot_ohlc_data
-import io
 from db import DATABASE_CONFIG, DATABASE_TYPE, DatabaseController
-import base64
 
 
 app = Flask(__name__)
@@ -54,7 +50,7 @@ def get_tokens():
         query = f"SELECT * FROM token_data WHERE name LIKE %(search_query)s"
         parameters = {'search_query': '%' + search_query + '%'}
     else:
-        query = f"SELECT * FROM token_data {sort_by} LIMIT %(limit)s OFFSET %(offset)s"
+        query = f"SELECT * FROM token_data order by {sort_by} {sort_order} LIMIT %(limit)s OFFSET %(offset)s"
         parameters = {'limit': per_page, 'offset': offset}
 
     tokens = db.query_db(query, parameters)
