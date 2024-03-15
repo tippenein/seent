@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request, url_for, render_template, send_file
+from flask import jsonify, Flask, redirect, request, url_for, render_template, send_file
 from flask_socketio import SocketIO
 import sqlite3
 import os
@@ -17,7 +17,9 @@ db = DatabaseController(DATABASE_CONFIG[DATABASE_TYPE], DATABASE_TYPE)
 
 @app.route('/')
 def home():
-    return redirect(url_for('get_tokens'))
+    return jsonify(healthy=True)
+# def home():
+#     return redirect(url_for('get_tokens'))
 
 # @app.route('/all')
 # def top():
