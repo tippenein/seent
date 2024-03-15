@@ -1,247 +1,247 @@
-import requests
-import pandas as pd
-import matplotlib
-import matplotlib.pyplot as plt
-import io
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-import matplotlib.dates as mdates
-matplotlib.use('Agg')  # Use the 'Agg' backend, which is non-interactive and does not require a GUI
-from datetime import datetime
-import time
-import csv
-import os
-import numpy as np
-import sqlite3
+# import requests
+# import pandas as pd
+# import matplotlib
+# import matplotlib.pyplot as plt
+# import io
+# from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+# import matplotlib.dates as mdates
+# matplotlib.use('Agg')  # Use the 'Agg' backend, which is non-interactive and does not require a GUI
+# from datetime import datetime
+# import time
+# import csv
+# import os
+# import numpy as np
+# import sqlite3
 
-def fetch_ohlc_data(pool_address, bot_timestamp):
-    time_diff_minutes = get_time_diff_minutes(bot_timestamp)
-    interval, timeframe = get_interval_and_timeframe(time_diff_minutes)
+# def fetch_ohlc_data(pool_address, bot_timestamp):
+#     time_diff_minutes = get_time_diff_minutes(bot_timestamp)
+#     interval, timeframe = get_interval_and_timeframe(time_diff_minutes)
 
-    api_url = f"https://api.geckoterminal.com/api/v2/networks/solana/pools/{pool_address}/ohlcv/{timeframe}"
-    headers = {"Accept": "application/json;version=20230302"}
-    params = {
-        "aggregate": interval,
-        "currency": "usd",
-        "limit": 1000,
-    }
+#     api_url = f"https://api.geckoterminal.com/api/v2/networks/solana/pools/{pool_address}/ohlcv/{timeframe}"
+#     headers = {"Accept": "application/json;version=20230302"}
+#     params = {
+#         "aggregate": interval,
+#         "currency": "usd",
+#         "limit": 1000,
+#     }
 
-    response = requests.get(api_url, headers=headers, params=params)
-    data = response.json()
+#     response = requests.get(api_url, headers=headers, params=params)
+#     data = response.json()
 
-    if "data" in data and "meta" in data:
-        return data["data"], data["meta"]
-    else:
-        return None, None
+#     if "data" in data and "meta" in data:
+#         return data["data"], data["meta"]
+#     else:
+#         return None, None
 
-def get_time_diff_minutes(bot_timestamp):
-    current_timestamp = int(time.time())
-    time_diff = current_timestamp - bot_timestamp
-    time_diff_minutes = time_diff // 60
-    return time_diff_minutes
+# def get_time_diff_minutes(bot_timestamp):
+#     current_timestamp = int(time.time())
+#     time_diff = current_timestamp - bot_timestamp
+#     time_diff_minutes = time_diff // 60
+#     return time_diff_minutes
 
-def get_interval_and_timeframe(time_diff_minutes):
-    if time_diff_minutes <= 1000:
-        interval = 1
-        timeframe = "minute"
-    elif time_diff_minutes <= 5000:
-        interval = 5
-        timeframe = "minute"
-    elif time_diff_minutes <= 15000:
-        interval = 15
-        timeframe = "minute"
-    elif time_diff_minutes <= 60000:
-        interval = 1
-        timeframe = "hour"
-    elif time_diff_minutes <= 240000:
-        interval = 4
-        timeframe = "hour"
-    elif time_diff_minutes <= 720000:
-        interval = 12
-        timeframe = "hour"
-    else:
-        interval = 1
-        timeframe = "day"
+# def get_interval_and_timeframe(time_diff_minutes):
+#     if time_diff_minutes <= 1000:
+#         interval = 1
+#         timeframe = "minute"
+#     elif time_diff_minutes <= 5000:
+#         interval = 5
+#         timeframe = "minute"
+#     elif time_diff_minutes <= 15000:
+#         interval = 15
+#         timeframe = "minute"
+#     elif time_diff_minutes <= 60000:
+#         interval = 1
+#         timeframe = "hour"
+#     elif time_diff_minutes <= 240000:
+#         interval = 4
+#         timeframe = "hour"
+#     elif time_diff_minutes <= 720000:
+#         interval = 12
+#         timeframe = "hour"
+#     else:
+#         interval = 1
+#         timeframe = "day"
 
-    return interval, timeframe
+#     return interval, timeframe
 
-def plot_candlesticks(ax, df, interval):
-    if interval == 1:
-        width = 0.0005
-    elif interval == 5:
-        width = 0.002
-    elif interval == 15:
-        width = 0.005
-    elif interval == 60:
-        width = 0.02
-    elif interval == 240:
-        width = 0.08
-    elif interval == 720:
-        width = 0.24
-    else:
-        width = 0.5
+# def plot_candlesticks(ax, df, interval):
+#     if interval == 1:
+#         width = 0.0005
+#     elif interval == 5:
+#         width = 0.002
+#     elif interval == 15:
+#         width = 0.005
+#     elif interval == 60:
+#         width = 0.02
+#     elif interval == 240:
+#         width = 0.08
+#     elif interval == 720:
+#         width = 0.24
+#     else:
+#         width = 0.5
 
-    up = df[df["close"] >= df["open"]]
-    down = df[df["close"] < df["open"]]
+#     up = df[df["close"] >= df["open"]]
+#     down = df[df["close"] < df["open"]]
 
-    # Plot candle body
-    ax.bar(up["timestamp"], up["close"] - up["open"], width, bottom=up["open"], color="green")
-    ax.bar(down["timestamp"], down["close"] - down["open"], width, bottom=down["open"], color="red")
+#     # Plot candle body
+#     ax.bar(up["timestamp"], up["close"] - up["open"], width, bottom=up["open"], color="green")
+#     ax.bar(down["timestamp"], down["close"] - down["open"], width, bottom=down["open"], color="red")
 
-    # Plot wicks
-    ax.vlines(up["timestamp"], up["low"], up["high"], color="green", linewidth=0.5)
-    ax.vlines(down["timestamp"], down["low"], down["high"], color="red", linewidth=0.5)
+#     # Plot wicks
+#     ax.vlines(up["timestamp"], up["low"], up["high"], color="green", linewidth=0.5)
+#     ax.vlines(down["timestamp"], down["low"], down["high"], color="red", linewidth=0.5)
 
-def process_data(data):
-    ohlcv_data = data
-    df = pd.DataFrame(ohlcv_data, columns=["timestamp", "open", "high", "low", "close", "volume"])
-    df["timestamp"] = pd.to_datetime(df["timestamp"], unit="s")
+# def process_data(data):
+#     ohlcv_data = data
+#     df = pd.DataFrame(ohlcv_data, columns=["timestamp", "open", "high", "low", "close", "volume"])
+#     df["timestamp"] = pd.to_datetime(df["timestamp"], unit="s")
 
-    return df
+#     return df
 
-def plot_bot_call(ax, bot_timestamp, df):
-    star_size = 200
-    star_color = 'magenta'
-    border_color = 'black'
-    border_width = 1
+# def plot_bot_call(ax, bot_timestamp, df):
+#     star_size = 200
+#     star_color = 'magenta'
+#     border_color = 'black'
+#     border_width = 1
 
-    # Find the closest candle timestamp to the bot call timestamp
-    closest_timestamp = min(df['timestamp'], key=lambda x: abs(x - bot_timestamp))
-    candle = df[df['timestamp'] == closest_timestamp]
+#     # Find the closest candle timestamp to the bot call timestamp
+#     closest_timestamp = min(df['timestamp'], key=lambda x: abs(x - bot_timestamp))
+#     candle = df[df['timestamp'] == closest_timestamp]
 
-    if not candle.empty:
-        open_price = candle['open'].values[0]
-        close_price = candle['close'].values[0]
-        # high_price = candle['high'].values[0]
-        bot_price = close_price
+#     if not candle.empty:
+#         open_price = candle['open'].values[0]
+#         close_price = candle['close'].values[0]
+#         # high_price = candle['high'].values[0]
+#         bot_price = close_price
 
-        ax.scatter(
-            closest_timestamp,
-            bot_price,
-            s=star_size,
-            marker='*',
-            color=star_color,
-            edgecolors=border_color,
-            linewidths=border_width,
-            label=f'Seer Call {bot_price:.5f}',
-            zorder=3
-        )
+#         ax.scatter(
+#             closest_timestamp,
+#             bot_price,
+#             s=star_size,
+#             marker='*',
+#             color=star_color,
+#             edgecolors=border_color,
+#             linewidths=border_width,
+#             label=f'Seer Call {bot_price:.5f}',
+#             zorder=3
+#         )
 
-def configure_plot(ax, pool_address, meta, interval, timeframe, color=""):
-    base_symbol = meta["base"]["symbol"]
-    quote_symbol = meta["quote"]["symbol"]
-    quote_str = quote_symbol.replace("$", "")
-    interval_str = f"{interval}{timeframe[0]}"
+# def configure_plot(ax, pool_address, meta, interval, timeframe, color=""):
+#     base_symbol = meta["base"]["symbol"]
+#     quote_symbol = meta["quote"]["symbol"]
+#     quote_str = quote_symbol.replace("$", "")
+#     interval_str = f"{interval}{timeframe[0]}"
 
-    # Format x-axis tick labels to show hour and date
-    ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d %H:00"))
-    ax.xaxis.set_major_locator(mdates.AutoDateLocator())
-    plt.xticks(rotation=45, ha='right')
+#     # Format x-axis tick labels to show hour and date
+#     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d %H:00"))
+#     ax.xaxis.set_major_locator(mdates.AutoDateLocator())
+#     plt.xticks(rotation=45, ha='right')
 
-    ax.set_xlabel("Time")
-    ax.set_ylabel(f"Price (USD)")
-    ax.set_title(f"{interval_str} price for {base_symbol}/{quote_str} pool")
-    ax.legend()
+#     ax.set_xlabel("Time")
+#     ax.set_ylabel(f"Price (USD)")
+#     ax.set_title(f"{interval_str} price for {base_symbol}/{quote_str} pool")
+#     ax.legend()
 
-    ax.grid(which="major", linestyle="-", linewidth=0.5, color="gray", alpha=0.7)
-    ax.grid(which="minor", linestyle="--", linewidth=0.25, color="gray", alpha=0.4)
-    ax.minorticks_on()
+#     ax.grid(which="major", linestyle="-", linewidth=0.5, color="gray", alpha=0.7)
+#     ax.grid(which="minor", linestyle="--", linewidth=0.25, color="gray", alpha=0.4)
+#     ax.minorticks_on()
 
-    handles, labels = ax.get_legend_handles_labels()
-    new_handles = []
-    for handle, label in zip(handles, labels):
-        if label == "Seer Call":
-            new_handles.append(plt.Line2D([], [], marker='*', markersize=13, color='magenta', markeredgecolor='black', markeredgewidth=1, linestyle='None'))
-        else:
-            new_handles.append(handle)
-    ax.legend(new_handles, labels)
-    filename = f"{base_symbol}.png"
-    return filename
+#     handles, labels = ax.get_legend_handles_labels()
+#     new_handles = []
+#     for handle, label in zip(handles, labels):
+#         if label == "Seer Call":
+#             new_handles.append(plt.Line2D([], [], marker='*', markersize=13, color='magenta', markeredgecolor='black', markeredgewidth=1, linestyle='None'))
+#         else:
+#             new_handles.append(handle)
+#     ax.legend(new_handles, labels)
+#     filename = f"{base_symbol}.png"
+#     return filename
 
-def datetime_to_epoch(datetime_str):
-    dt = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
-    epoch_time = int(dt.timestamp())
-    return epoch_time
+# def datetime_to_epoch(datetime_str):
+#     dt = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
+#     epoch_time = int(dt.timestamp())
+#     return epoch_time
 
-def get_solana_pool_address(token_address):
-    api_url = f"https://api.geckoterminal.com/api/v2/networks/solana/tokens/{token_address}/pools?page=1"
-    headers = {"Accept": "application/json"}
+# def get_solana_pool_address(token_address):
+#     api_url = f"https://api.geckoterminal.com/api/v2/networks/solana/tokens/{token_address}/pools?page=1"
+#     headers = {"Accept": "application/json"}
 
-    response = requests.get(api_url, headers=headers)
-    data = response.json()
+#     response = requests.get(api_url, headers=headers)
+#     data = response.json()
 
-    if "data" in data:
-        for pool in data["data"]:
-            if pool["id"].startswith("solana") and pool["attributes"]["name"].endswith("SOL"):
-                return pool["attributes"]["address"]
+#     if "data" in data:
+#         for pool in data["data"]:
+#             if pool["id"].startswith("solana") and pool["attributes"]["name"].endswith("SOL"):
+#                 return pool["attributes"]["address"]
 
-    return None
+#     return None
 
-def plot_ohlc_data(pool_address, bot_timestamp, color="unknown"):
-    data, meta = fetch_ohlc_data(pool_address, bot_timestamp)
-    shifted_data = data["attributes"]["ohlcv_list"]
-    for t in shifted_data:
-        t[0] = t[0] - 18000
+# def plot_ohlc_data(pool_address, bot_timestamp, color="unknown"):
+#     data, meta = fetch_ohlc_data(pool_address, bot_timestamp)
+#     shifted_data = data["attributes"]["ohlcv_list"]
+#     for t in shifted_data:
+#         t[0] = t[0] - 18000
 
-    df = process_data(shifted_data)
+#     df = process_data(shifted_data)
 
-    bot_timestamp = pd.to_datetime(bot_timestamp, unit="s")
-    start_time = bot_timestamp - pd.Timedelta(minutes=10)
-    filtered_df = df[df["timestamp"] >= start_time]
-    if filtered_df.empty:
-        filtered_df = df
+#     bot_timestamp = pd.to_datetime(bot_timestamp, unit="s")
+#     start_time = bot_timestamp - pd.Timedelta(minutes=10)
+#     filtered_df = df[df["timestamp"] >= start_time]
+#     if filtered_df.empty:
+#         filtered_df = df
 
-    time_diff_minutes = get_time_diff_minutes(bot_timestamp.timestamp())
-    interval, timeframe = get_interval_and_timeframe(time_diff_minutes)
-    fig, ax = plt.subplots(figsize=(12, 6))
-    plot_candlesticks(ax, filtered_df, interval)  # Pass the interval to plot_candlesticks
-    plot_bot_call(ax, bot_timestamp, filtered_df)
+#     time_diff_minutes = get_time_diff_minutes(bot_timestamp.timestamp())
+#     interval, timeframe = get_interval_and_timeframe(time_diff_minutes)
+#     fig, ax = plt.subplots(figsize=(12, 6))
+#     plot_candlesticks(ax, filtered_df, interval)  # Pass the interval to plot_candlesticks
+#     plot_bot_call(ax, bot_timestamp, filtered_df)
 
-    # Find the candle closest to the bot call timestamp
-    closest_candle = filtered_df.iloc[np.argmin(np.abs(filtered_df['timestamp'] - bot_timestamp))]
-    bot_call_price = closest_candle['close'] + 0.25*(closest_candle['high'] - closest_candle["close"])
-    bot_call_time = closest_candle['timestamp']
+#     # Find the candle closest to the bot call timestamp
+#     closest_candle = filtered_df.iloc[np.argmin(np.abs(filtered_df['timestamp'] - bot_timestamp))]
+#     bot_call_price = closest_candle['close'] + 0.25*(closest_candle['high'] - closest_candle["close"])
+#     bot_call_time = closest_candle['timestamp']
 
-    # Find the maximum closing price after the bot call
-    after_bot_call_df = filtered_df[filtered_df['timestamp'] > bot_timestamp]
-    if not after_bot_call_df.empty:
-        max_close_price = after_bot_call_df['close'].max()
-        max_close_time = after_bot_call_df.loc[after_bot_call_df['close'].idxmax(), 'timestamp']
-        max_close_timestamp = after_bot_call_df.loc[after_bot_call_df['close'].idxmax(), 'timestamp']
+#     # Find the maximum closing price after the bot call
+#     after_bot_call_df = filtered_df[filtered_df['timestamp'] > bot_timestamp]
+#     if not after_bot_call_df.empty:
+#         max_close_price = after_bot_call_df['close'].max()
+#         max_close_time = after_bot_call_df.loc[after_bot_call_df['close'].idxmax(), 'timestamp']
+#         max_close_timestamp = after_bot_call_df.loc[after_bot_call_df['close'].idxmax(), 'timestamp']
 
-        # Find the minimum closing price between the bot call and the maximum closing price
-        min_low_price = after_bot_call_df.loc[after_bot_call_df['timestamp'] <= max_close_timestamp, 'low'].min()
-        min_low_time = after_bot_call_df.loc[after_bot_call_df['low'] == min_low_price, 'timestamp'].iloc[0]
+#         # Find the minimum closing price between the bot call and the maximum closing price
+#         min_low_price = after_bot_call_df.loc[after_bot_call_df['timestamp'] <= max_close_timestamp, 'low'].min()
+#         min_low_time = after_bot_call_df.loc[after_bot_call_df['low'] == min_low_price, 'timestamp'].iloc[0]
 
-        # Calculate the percentage gain and loss
-        max_gain_pct = max((max_close_price - bot_call_price) / bot_call_price * 100, 0)
-        max_loss_pct = min((min_low_price - bot_call_price) / bot_call_price * 100, 0)
+#         # Calculate the percentage gain and loss
+#         max_gain_pct = max((max_close_price - bot_call_price) / bot_call_price * 100, 0)
+#         max_loss_pct = min((min_low_price - bot_call_price) / bot_call_price * 100, 0)
 
-        # Plot the horizontal lines for maximum gain and loss
-        ax.axhline(y=max_close_price, color='green', linestyle='--', linewidth=1, label=f"Max Gain {max_close_price:.5f} ({max_gain_pct:.2f}%)")
-        ax.axhline(y=min_low_price, color='red', linestyle='--', linewidth=1, label=f"Max Loss {min_low_price:.5f} ({max_loss_pct:.2f}%)")
-    else:
-         max_close_price, max_close_time, min_low_price, min_low_time, max_gain_pct, max_loss_pct = [None] * 6
-    result_dict = {
-        "price_of_bot_call": bot_call_price,
-        "time_of_bot_call": bot_call_time,
-        "price_of_max_gain": max_close_price,
-        "time_of_max_gain": max_close_time,
-        "max_gain_percent": max_gain_pct,
-        "price_of_max_loss": min_low_price,
-        "time_of_max_loss": min_low_time,
-        "max_loss_percent": max_loss_pct,
-        "ticker": meta["base"]["symbol"],
-        "token_address": pool_address
-    }
+#         # Plot the horizontal lines for maximum gain and loss
+#         ax.axhline(y=max_close_price, color='green', linestyle='--', linewidth=1, label=f"Max Gain {max_close_price:.5f} ({max_gain_pct:.2f}%)")
+#         ax.axhline(y=min_low_price, color='red', linestyle='--', linewidth=1, label=f"Max Loss {min_low_price:.5f} ({max_loss_pct:.2f}%)")
+#     else:
+#          max_close_price, max_close_time, min_low_price, min_low_time, max_gain_pct, max_loss_pct = [None] * 6
+#     result_dict = {
+#         "price_of_bot_call": bot_call_price,
+#         "time_of_bot_call": bot_call_time,
+#         "price_of_max_gain": max_close_price,
+#         "time_of_max_gain": max_close_time,
+#         "max_gain_percent": max_gain_pct,
+#         "price_of_max_loss": min_low_price,
+#         "time_of_max_loss": min_low_time,
+#         "max_loss_percent": max_loss_pct,
+#         "ticker": meta["base"]["symbol"],
+#         "token_address": pool_address
+#     }
 
-    ymin = 0
-    ymax = filtered_df["close"].max() * 1.5
-    ax.set_ylim(ymin, ymax)
+#     ymin = 0
+#     ymax = filtered_df["close"].max() * 1.5
+#     ax.set_ylim(ymin, ymax)
 
-    plt.tight_layout()
+#     plt.tight_layout()
 
-    output = io.BytesIO()
-    FigureCanvas(fig).print_png(output)
-    plt.close(fig)
-    output.seek(0)
-    return output.getvalue()
+#     output = io.BytesIO()
+#     FigureCanvas(fig).print_png(output)
+#     plt.close(fig)
+#     output.seek(0)
+#     return output.getvalue()
