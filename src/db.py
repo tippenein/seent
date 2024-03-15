@@ -7,10 +7,10 @@ from psycopg2.extras import RealDictCursor
 load_dotenv()
 
 VERCEL_ENV = os.getenv('VERCEL_ENV')
-POSTGRES_DBNAME = os.getenv('VERCEL_POSTGRES_DBNAME')
-POSTGRES_USER = os.getenv('VERCEL_POSTGRES_USER')
-POSTGRES_PASSWORD = os.getenv('VERCEL_POSTGRES_PASSWORD')
-POSTGRES_HOST = os.getenv('VERCEL_POSTGRES_HOST')
+POSTGRES_DBNAME = os.getenv('POSTGRES_DBNAME')
+POSTGRES_USER = os.getenv('POSTGRES_USER')
+POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+POSTGRES_HOST = os.getenv('POSTGRES_HOST')
 
 DATABASE_CONFIG = {
     'sqlite': {
@@ -27,10 +27,11 @@ DATABASE_CONFIG = {
 
 # Choose the database type here ('sqlite' or 'postgres')
 def get_database_type():
-  if VERCEL_ENV == 'dev':
-    return 'sqlite'
-  else:
     return 'postgres'
+#   if VERCEL_ENV == 'dev':
+#     return 'sqlite'
+#   else:
+#     return 'postgres'
 
 class DatabaseController:
     def __init__(self, config, db_type):
@@ -43,7 +44,6 @@ class DatabaseController:
             conn.row_factory = sqlite3.Row
             return conn
         elif self.db_type == 'postgres':
-            print(self.config)
             conn = psycopg2.connect(
                 dbname=self.config['DATABASE'],
                 user=self.config['USER'],
@@ -55,17 +55,26 @@ class DatabaseController:
         else:
             raise ValueError("Unsupported database type")
 
-    def query_db(self, query, args=(), one=False):
+    def query_db(self, query, parameters):
         conn = self.get_connection()
-        if self.db_type == 'postgres':
-            cur = conn.cursor(cursor_factory=RealDictCursor)
-        else:
-            # For SQLite and other databases, do not use cursor_factory
-            cur = conn.cursor()
-        cur.execute(query, args)
-        rv = cur.fetchall()
-        cur.close()
-        conn.close()
-        return (rv[0] if rv else None) if one else rv
+        cursor = conn.cursor()
+        try:
+            if self.db_type == 'sqlite':
+                cursor.execute(query, parameters)
+            elif self.db_type == 'postgres':
+                query = cursor.mogrify(query, parameters).decode('utf-8')
+                cursor.execute(query)
+            else:
+                raise ValueError("Unsupported database type")
+            columns = [col[0] for col in cursor.description]
+
+        # Fetch all rows as a list of dictionaries
+            rows = [dict(zip(columns, row)) for row in cursor.fetchall()]
+            return rows
+        except (sqlite3.Error, psycopg2.Error) as e:
+            print("Database Error:", e)
+        finally:
+            cursor.close()
+            conn.close()
 
 DATABASE_TYPE = get_database_type()

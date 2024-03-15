@@ -51,10 +51,13 @@ def get_tokens():
     offset = (page - 1) * per_page
 
     if search_query:
-        tokens = db.query_db(f"SELECT * FROM token_data WHERE name LIKE ? ORDER BY {sort_by} {sort_order}", ('%' + search_query + '%',))
+        query = f"SELECT * FROM token_data WHERE name LIKE %(search_query)s {sort_by}"
+        parameters = {'search_query': '%' + search_query + '%'}
     else:
-        tokens =  db.query_db(f'SELECT * FROM token_data ORDER BY {sort_by} {sort_order} LIMIT ? OFFSET ?', (per_page, offset))
+        query = f"SELECT * FROM token_data {sort_by} LIMIT %(limit)s OFFSET %(offset)s"
+        parameters = {'limit': per_page, 'offset': offset}
 
+    tokens = db.query_db(query, parameters)
 
     return render_template('list_view.html', tokens=tokens, sort_by=sort_by, sort_order=sort_order)
 
