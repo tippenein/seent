@@ -21,7 +21,7 @@ python runner.py
 python app.py
 ```
 
-after you have the db, you can run the app with `vercel dev` or `python3 src/app.py`
+after you have the db, you can run the app with `python3 application.py`
 
 # DB
 An example query you might call on to find the green calls and when they were called
