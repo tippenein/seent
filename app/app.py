@@ -3,8 +3,9 @@ import sqlite3
 import os
 from datetime import datetime
 # from plot import datetime_to_epoch, get_solana_pool_address, plot_ohlc_data
-from db import DATABASE_CONFIG, DATABASE_TYPE, DatabaseController
+from .db import DATABASE_CONFIG, DATABASE_TYPE, DatabaseController
 
+app = Flask(__name__)
 
 DEBUG=False
 
@@ -40,7 +41,7 @@ def get_tokens():
     search_query = request.args.get('query', '')
 
     page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 12, type=int)
+    per_page = request.args.get('per_page', 20, type=int)
     sort_by = request.args.get('sort_by', 'date')
     sort_order = request.args.get('sort_order', 'asc')
     offset = (page - 1) * per_page
