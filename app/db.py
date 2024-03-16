@@ -29,8 +29,10 @@ DATABASE_CONFIG = {
 # Choose the database type here ('sqlite' or 'postgres')
 def get_database_type():
   if ENV == 'dev':
+    print("using sqlite")
     return 'sqlite'
   else:
+    print("using postgres")
     return 'postgres'
 
 class DatabaseController:

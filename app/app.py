@@ -9,6 +9,7 @@ app = Flask(__name__)
 
 DEBUG=False
 
+ENV = os.getenv('ENV')
 db = DatabaseController(DATABASE_CONFIG[DATABASE_TYPE], DATABASE_TYPE)
 
 @app.route('/health')
@@ -36,6 +37,14 @@ def home():
 #     # Render the template with the plot
 #     return render_template('plot.html', plot_url=plot_url)
 
+# fuck, this is dumber than copy pasta
+def makeDBString(s):
+    sqlite = ENV == 'dev'
+    if sqlite:
+        return f":{s}"
+    else:
+        return f"%({s})s"
+
 @app.route('/tokens')
 def get_tokens():
     search_query = request.args.get('query', '')
@@ -46,12 +55,19 @@ def get_tokens():
     sort_order = request.args.get('sort_order', 'asc')
     offset = (page - 1) * per_page
 
+
     if search_query:
-        query = f"SELECT * FROM token_data WHERE name LIKE %(search_query)s"
         parameters = {'search_query': '%' + search_query + '%'}
+        if ENV == 'dev':
+            query = f"SELECT * FROM token_data WHERE name LIKE :search_query"
+        else:
+            query = f"SELECT * FROM token_data WHERE name LIKE '%(search_query)s'"
     else:
-        query = f"SELECT * FROM token_data order by {sort_by} {sort_order} LIMIT %(limit)s OFFSET %(offset)s"
         parameters = {'limit': per_page, 'offset': offset}
+        if ENV == 'dev':
+            query = f"SELECT * FROM token_data order by {sort_by} {sort_order} LIMIT :limit OFFSET :offset"
+        else:
+            query = f"SELECT * FROM token_data order by {sort_by} {sort_order} LIMIT %(limit)s OFFSET %(offset)s"
 
     tokens = db.query_db(query, parameters)
 
