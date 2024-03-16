@@ -22,7 +22,7 @@ sed -e '/PRAGMA/d' \
     "$DUMP_SQL_PATH" > postgres_ready_dump.sql
 
 # Execute the SQL within a transaction in PostgreSQL
-PGPASSWORD=$POSTGRES_PASSWORD psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -d "$POSTGRES_NAME" <<EOF
+PGPASSWORD=$POSTGRES_PASSWORD psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -d "$POSTGRES_DBNAME" -p $POSTGRES_PORT <<EOF
 BEGIN;
 DROP TABLE IF EXISTS $TABLE_NAME;
 \i postgres_ready_dump.sql

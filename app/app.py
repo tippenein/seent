@@ -1,5 +1,4 @@
 from flask import jsonify, Flask, redirect, request, url_for, render_template, send_file
-from flask_socketio import SocketIO
 import sqlite3
 import os
 from datetime import datetime
@@ -7,11 +6,7 @@ from datetime import datetime
 from db import DATABASE_CONFIG, DATABASE_TYPE, DatabaseController
 
 
-app = Flask(__name__)
-
-
 DEBUG=False
-socketio = SocketIO(app)
 
 db = DatabaseController(DATABASE_CONFIG[DATABASE_TYPE], DATABASE_TYPE)
 
@@ -76,7 +71,3 @@ def get_tokens():
 #     else:
 #         print("shit")
 #         return "Could not generate plot", 404
-
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5001))
-    socketio.run(app, host='0.0.0.0', port=port, debug=DEBUG)
