@@ -53,7 +53,7 @@ def setup_db(conn):
             price REAL,
             marketcap REAL,
             memeability REAL,
-            volume_24h REAL,
+            volume integer,
             ai_degen TEXT,
             top_20_holders REAL,
             total_holders INTEGER,
@@ -78,7 +78,7 @@ def insert(conn, data, date, id):
         if not exists:
             cursor.execute('''
             INSERT INTO token_data (
-                id, date, token, name, price, marketcap, memeability, volume_24h, ai_degen, top_20_holders,
+                id, date, token, name, price, marketcap, memeability, volume, ai_degen, top_20_holders,
                 total_holders, transactions, price_change_5min
             ) VALUES (
                 :id, :date, :token, :name, :price, :marketcap, :memeability, :volume, :ai_degen, :top_20_holders,

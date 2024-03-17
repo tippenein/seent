@@ -55,6 +55,10 @@ def get_tokens():
     sort_order = request.args.get('sort_order', 'asc')
     offset = (page - 1) * per_page
 
+    def datetime_friendly(dt):
+        datetime_obj = datetime.strptime(dt, '%Y-%m-%d %H:%M:%S')
+
+        return datetime_obj.strftime('%b %d %H:%M')
 
     if search_query:
         parameters = {'search_query': '%' + search_query + '%'}
@@ -71,7 +75,7 @@ def get_tokens():
 
     tokens = db.query_db(query, parameters)
 
-    return render_template('list_view.html', tokens=tokens, sort_by=sort_by, sort_order=sort_order)
+    return render_template('list_view.html', tokens=tokens, sort_by=sort_by, sort_order=sort_order, datetime_friendly=datetime_friendly)
 
 # @app.route('/tokens/<token>')
 # def token_detail(token):

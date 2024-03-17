@@ -16,6 +16,7 @@ sed -e '/PRAGMA/d' \
     -e '/BEGIN TRANSACTION;/d' \
     -e '/COMMIT;/d' \
     -e '/ROLLBACK;/d' \
+    -e 's/integer/bigint/g' \
     -e 's/CREATE TABLE \"/CREATE TABLE IF NOT EXISTS \"/g' \
     -e 's/INSERT INTO \"/INSERT INTO /g' \
     -e 's/\" VALUES/ VALUES/g' \
