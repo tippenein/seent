@@ -21,8 +21,19 @@ sed -e '/PRAGMA/d' \
     -e 's/\" VALUES/ VALUES/g' \
     "$DUMP_SQL_PATH" > postgres_ready_dump.sql
 
+echo "pushing to db at $POSTGRES_HOST"
+echo "$POSTGRES_HOST"
+echo "$POSTGRES_USER"
+echo "$POSTGRES_DBNAME"
+echo "$POSTGRES_PORT"
 # Execute the SQL within a transaction in PostgreSQL
-PGPASSWORD=$POSTGRES_PASSWORD psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -d "$POSTGRES_DBNAME" -p $POSTGRES_PORT <<EOF
+PGPASSWORD=$POSTGRES_PASSWORD psql "sslmode=require \
+  host=$POSTGRES_HOST \
+  user=$POSTGRES_USER \
+  dbname=$POSTGRES_DBNAME \
+  port=$POSTGRES_PORT" \
+  -v ON_ERROR_STOP=1 \
+  --echo-errors <<EOF
 BEGIN;
 DROP TABLE IF EXISTS $TABLE_NAME;
 \i postgres_ready_dump.sql

@@ -25,15 +25,21 @@ class TestTokenDataParsing(unittest.TestCase):
         Total Holders: 133
         """
 
-
     def test_parsing(self):
         data = parse_token_data(self.text)
         self.assertEqual(data['token'], "EBrMAYymNrAkgmmEkeZ23dhKe6oAT5ZwMXPPMEFDSDUp")
         self.assertEqual(data['marketcap'], 6200)
         self.assertEqual(data['price_change'], -0.12)
-        self.assertEqual(data['volume'], 307610)
         self.assertEqual(data['top_20_holders'], 75.8)
         self.assertEqual(data['total_holders'], 133)
+
+    def test_volume(self):
+        data = parse_token_data(self.text)
+        self.assertEqual(data['volume'], 307610)
+
+    def test_millions(self):
+        data = parse_token_data("Volume: $139.78M")
+        self.assertEqual(data['volume'], 139780000)
 
     def test_name(self):
         data = parse_token_data(self.text)

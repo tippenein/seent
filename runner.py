@@ -53,7 +53,7 @@ def setup_db(conn):
             price REAL,
             marketcap REAL,
             memeability REAL,
-            volume_24h INT,
+            volume_24h REAL,
             ai_degen TEXT,
             top_20_holders REAL,
             total_holders INTEGER,
@@ -81,7 +81,7 @@ def insert(conn, data, date, id):
                 id, date, token, name, price, marketcap, memeability, volume_24h, ai_degen, top_20_holders,
                 total_holders, transactions, price_change_5min
             ) VALUES (
-                :id, :date, :token, :name, :price, :marketcap, :memeability, :volume_24h, :ai_degen, :top_20_holders,
+                :id, :date, :token, :name, :price, :marketcap, :memeability, :volume, :ai_degen, :top_20_holders,
                 :total_holders, :transactions, :price_change_5min
             )
             ''', {'id': id, 'date': date, **data})
@@ -120,7 +120,7 @@ async def main():
     channel = await client.get_entity(channel_username)
 
     # arbitrary limit of 1000
-    messages = await fetch_messages(client, channel, limit=100, delay=1)
+    messages = await fetch_messages(client, channel, limit=150, delay=1)
 
     count = 0
     for message in messages:
