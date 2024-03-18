@@ -61,11 +61,11 @@ def get_tokens():
         return datetime_obj.strftime('%b %d %H:%M')
 
     if search_query:
-        parameters = {'search_query': '%' + search_query + '%'}
+        parameters = {'search_query': f"%{search_query}%"}
         if ENV == 'dev':
             query = f"SELECT * FROM token_data WHERE name LIKE :search_query"
         else:
-            query = f"SELECT * FROM token_data WHERE name ILIKE '%(search_query)s%'"
+            query = f"SELECT * FROM token_data WHERE name ILIKE %(search_query)s"
     else:
         parameters = {'limit': per_page, 'offset': offset}
         if ENV == 'dev':

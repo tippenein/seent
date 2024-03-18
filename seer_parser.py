@@ -39,8 +39,6 @@ def parse_token_data(raw_text):
     token_pattern = re.compile(r'Address: ([-\w.]+)')
     name_pattern = re.compile(r'Pair: ([-\$\w./]+)')
     price_pattern = re.compile(r'Price: \$(\S+)')
-    marketcap_pattern = re.compile(r'Latest Marketcap: \$([\d.]+[kmb]?)')
-    volume_pattern = re.compile(r'Volume: ([\d.]+[kmb]?)')
     memeability_pattern = re.compile(r'Memeability: ([\d.]+)/10')
     ai_degen_pattern = re.compile(r'AI Degen: (\S+)')
     top_holders_pattern = re.compile(r'Top 20 Holders: ([\d.]+)')
@@ -54,13 +52,14 @@ def parse_token_data(raw_text):
     else:
         data['price_change'] = None
 
-    volume_pattern = re.compile(r'Volume: \$([\d.]+[kMB]?)')
+    volume_pattern = re.compile(r'Volume: ([\d.]+[kMB]?)')
     volume_match = volume_pattern.search(raw_text)
     if volume_match:
         data['volume'] = parse_volume(volume_match.group(1))
     else:
         data['volume'] = None
 
+    marketcap_pattern = re.compile(r'Latest Marketcap: \$([\d.]+[kMB]?)')
     marketcap_match = marketcap_pattern.search(raw_text)
     if marketcap_match:
         # Convert the marketcap string to a float value
