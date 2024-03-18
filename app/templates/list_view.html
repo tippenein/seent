@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+
     <title>Seery</title>
 </head>
 <body>
@@ -18,6 +20,7 @@
         <thead>
             <tr>
                 <th>Score</th>
+                <th></th>
                 <th><a href="?sort_by=name&sort_order={{ 'desc' if sort_by == 'name' and sort_order == 'asc' else 'asc' }}">Name</a></th>
                 <th><a href="?sort_by=date&sort_order={{ 'desc' if sort_by == 'date' and sort_order == 'asc' else 'asc' }}">Date</a></th>
                 <th><a href="?sort_by=price&sort_order={{ 'desc' if sort_by == 'price' and sort_order == 'asc' else 'asc' }}">Price</a></th>
@@ -35,7 +38,13 @@
                 <tr>
                     <td class="degen">{{ token.ai_degen }}</td>
                     <td>
-                        <a href="https://birdeye.so/token/{{ token.token }}?chain=solana" target="_blank">{{token.name}}</a>
+                        <a href="https://birdeye.so/token/{{ token.token }}?chain=solana" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </td>
+                    <td>
+                        <!-- <a href= target="_blank">{{token.name}}</a> -->
+                        <a href="{{ url_for('token_detail', token=token.token)}}">{{token.name}}</a>
                     </td>
                     <td>{{ datetime_friendly(token.date) }}</td>
                     <td>{{ token.price }}</td>

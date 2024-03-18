@@ -1,8 +1,8 @@
 from flask import jsonify, Flask, redirect, request, url_for, render_template, send_file
-import sqlite3
+import base64
 import os
 from datetime import datetime
-# from plot import datetime_to_epoch, get_solana_pool_address, plot_ohlc_data
+from .plot import datetime_to_epoch, get_solana_pool_address, plot_ohlc_data
 from .db import DATABASE_CONFIG, DATABASE_TYPE, DatabaseController
 
 app = Flask(__name__)
@@ -94,18 +94,18 @@ def get_tokens():
                             page=page
                             )
 
-# @app.route('/tokens/<token>')
-# def token_detail(token):
-#     date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+@app.route('/tokens/<token>')
+def token_detail(token):
+    date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-#     bot_timestamp = int(datetime_to_epoch(date) - 18000*2)
-#     print("fetching plot data")
-#     pool_address = get_solana_pool_address(token)
-#     image = plot_ohlc_data(pool_address, bot_timestamp)
-#     if image is not None:
-#         # Encode the image bytes to base64
-#         image_base64 = base64.b64encode(image).decode('utf-8')
-#         return render_template('plot.html', token=token, image=image_base64)
-#     else:
-#         print("shit")
-#         return "Could not generate plot", 404
+    bot_timestamp = int(datetime_to_epoch(date) - 18000*2)
+    print("fetching plot data")
+    pool_address = get_solana_pool_address(token)
+    image = plot_ohlc_data(pool_address, bot_timestamp)
+    if image is not None:
+        # Encode the image bytes to base64
+        image_base64 = base64.b64encode(image).decode('utf-8')
+        return render_template('plot.html', token=token, image=image_base64)
+    else:
+        print("shit")
+        return "Could not generate plot", 404
