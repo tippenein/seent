@@ -20,10 +20,9 @@
     </style>
 </head>
 <body>
-    <a href="{{ url_for('get_tokens') }}" class="back-button">&larr; Back</a>
-
-    <h1>{{ token }} OHLC Plot</h1>
-
-    <img src="data:image/png;base64,{{ image }}" alt="{{ token }} OHLC Plot">
+    <div style="display:flex; flex-direction: column; justify-content: start; align-items: start">
+        <a href="{{ url_for('get_tokens') }}" class="back-button">&larr; Back</a>
+        <img src="data:image/png;base64,{{ image }}" alt="{{ token }} OHLC Plot">
+    </div>
 </body>
 </html>

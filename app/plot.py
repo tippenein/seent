@@ -169,11 +169,11 @@ def get_solana_pool_address(token_address):
     response = requests.get(api_url, headers=headers)
     data = response.json()
 
-    if "data" in data:
-        for pool in data["data"]:
-            if pool["id"].startswith("solana") and pool["attributes"]["name"].endswith("SOL"):
-                return pool["attributes"]["address"]
-
+    # If override is True, return the first pool's address, if available
+    if "data" in data and data["data"]:
+        pool = data["data"][0] #first pool
+        return pool["attributes"]["address"]
+    
     return None
 
 def plot_ohlc_data(pool_address, bot_timestamp, color="unknown"):
@@ -217,25 +217,15 @@ def plot_ohlc_data(pool_address, bot_timestamp, color="unknown"):
         max_loss_pct = min((min_low_price - bot_call_price) / bot_call_price * 100, 0)
 
         # Plot the horizontal lines for maximum gain and loss
-        ax.axhline(y=max_close_price, color='green', linestyle='--', linewidth=1, label=f"Max Gain {max_close_price:.5f} ({max_gain_pct:.2f}%)")
-        ax.axhline(y=min_low_price, color='red', linestyle='--', linewidth=1, label=f"Max Loss {min_low_price:.5f} ({max_loss_pct:.2f}%)")
+        ax.axhline(y=-100, color='green', linestyle='--', linewidth=1, label=f"Max Gain {max_close_price:.5f} ({max_gain_pct:.2f}%)")
+        ax.axhline(y=-100, color='red', linestyle='--', linewidth=1, label=f"Max Loss {min_low_price:.5f} ({max_loss_pct:.2f}%)")
     else:
          max_close_price, max_close_time, min_low_price, min_low_time, max_gain_pct, max_loss_pct = [None] * 6
-    result_dict = {
-        "price_of_bot_call": bot_call_price,
-        "time_of_bot_call": bot_call_time,
-        "price_of_max_gain": max_close_price,
-        "time_of_max_gain": max_close_time,
-        "max_gain_percent": max_gain_pct,
-        "price_of_max_loss": min_low_price,
-        "time_of_max_loss": min_low_time,
-        "max_loss_percent": max_loss_pct,
-        "ticker": meta["base"]["symbol"],
-        "token_address": pool_address
-    }
+    
+    configure_plot(ax, pool_address, meta, interval, timeframe, color)
 
-    ymin = 0
-    ymax = filtered_df["close"].max() * 1.5
+    ymin = filtered_df["low"].min()
+    ymax = filtered_df["close"].max()
     ax.set_ylim(ymin, ymax)
 
     plt.tight_layout()
