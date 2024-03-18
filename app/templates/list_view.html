@@ -1,94 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <title>Seery</title>
-</head>
-<body>
-    <h1>Seery</h1>
-    <div class="search-container">
-        <form action="/tokens" class="search-form" method="get">
-            <input type="search" id="search-bar" name="query" placeholder="Search...">
-            <input type="submit" value="Search" class="submit-button">
-            <a href="{{ url_for('get_tokens', sort_by=sort_by, sort_order=sort_order) }}" class="clear-query-button">Clear Query</a>
-        </form>
-    {% if tokens %}
-    <table id="tokenTable">
-        <thead>
+{% extends "layout.html" %}
+{% block content %}
+<div class="search-container">
+    <form action="/tokens" class="search-form" method="get">
+        <input type="search" id="search-bar" name="query" placeholder="Search...">
+        <input type="submit" value="Search" class="submit-button">
+        <a href="{{ url_for('get_tokens', sort_by=sort_by, sort_order=sort_order) }}" class="clear-query-button">Clear Query</a>
+    </form>
+</div>
+<div class="token-container">
+{% if tokens %}
+<table id="token-table">
+    <thead>
+        <tr>
+            <th>Score</th>
+            <th><a href="?sort_by=name&sort_order={{ 'desc' if sort_by == 'name' and sort_order == 'asc' else 'asc' }}">Name</a></th>
+            <th><a href="?sort_by=date&sort_order={{ 'desc' if sort_by == 'date' and sort_order == 'asc' else 'asc' }}">Date</a></th>
+            <th><a href="?sort_by=price&sort_order={{ 'desc' if sort_by == 'price' and sort_order == 'asc' else 'asc' }}">Price</a></th>
+            <th><a href="?sort_by=memeability&sort_order={{ 'desc' if sort_by == 'memeability' and sort_order == 'asc' else 'asc' }}">Memeability</a></th>
+            <th><a href="?sort_by=marketcap&sort_order={{ 'desc' if sort_by == 'marketcap' and sort_order == 'asc' else 'asc' }}">Marketcap</a></th>
+            <th><a href="?sort_by=volume&sort_order={{ 'desc' if sort_by == 'volume' and sort_order == 'asc' else 'asc' }}">Volume 24h</a></th>
+            <th><a href="?sort_by=top_20_holders&sort_order={{ 'desc' if sort_by == 'top_20_holders' and sort_order == 'asc' else 'asc' }}">Top 20 holders</a></th>
+            <th><a href="?sort_by=total_holders&sort_order={{ 'desc' if sort_by == 'total_holders' and sort_order == 'asc' else 'asc' }}">Total hodlers</a></th>
+            <th><a href="?sort_by=transactions&sort_order={{ 'desc' if sort_by == 'transactions' and sort_order == 'asc' else 'asc' }}">Transactions</a></th>
+            <th><a href="?sort_by=price_change_5min&sort_order={{ 'desc' if sort_by == 'price_change_5min' and sort_order == 'asc' else 'asc' }}">Price change 5min</a></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for token in tokens %}
             <tr>
-                <th>Score</th>
-                <th><a href="?sort_by=name&sort_order={{ 'desc' if sort_by == 'name' and sort_order == 'asc' else 'asc' }}">Name</a></th>
-                <th><a href="?sort_by=date&sort_order={{ 'desc' if sort_by == 'date' and sort_order == 'asc' else 'asc' }}">Date</a></th>
-                <th><a href="?sort_by=price&sort_order={{ 'desc' if sort_by == 'price' and sort_order == 'asc' else 'asc' }}">Price</a></th>
-                <th><a href="?sort_by=memeability&sort_order={{ 'desc' if sort_by == 'memeability' and sort_order == 'asc' else 'asc' }}">Memeability</a></th>
-                <th><a href="?sort_by=marketcap&sort_order={{ 'desc' if sort_by == 'marketcap' and sort_order == 'asc' else 'asc' }}">Marketcap</a></th>
-                <th><a href="?sort_by=volume&sort_order={{ 'desc' if sort_by == 'volume' and sort_order == 'asc' else 'asc' }}">Volume 24h</a></th>
-                <th><a href="?sort_by=top_20_holders&sort_order={{ 'desc' if sort_by == 'top_20_holders' and sort_order == 'asc' else 'asc' }}">Top 20 holders</a></th>
-                <th><a href="?sort_by=total_holders&sort_order={{ 'desc' if sort_by == 'total_holders' and sort_order == 'asc' else 'asc' }}">Total hodlers</a></th>
-                <th><a href="?sort_by=transactions&sort_order={{ 'desc' if sort_by == 'transactions' and sort_order == 'asc' else 'asc' }}">Transactions</a></th>
-                <th><a href="?sort_by=price_change_5min&sort_order={{ 'desc' if sort_by == 'price_change_5min' and sort_order == 'asc' else 'asc' }}">Price change 5min</a></th>
+                <td class="degen">{{ token.ai_degen }}</td>
+                <td>
+                    <a href="https://birdeye.so/token/{{ token.token }}?chain=solana" target="_blank">{{token.name}}</a>
+                </td>
+                <td>{{ datetime_friendly(token.date) }}</td>
+                <td>{{ token.price }}</td>
+                <td>{{ token.memeability }}</td>
+                <td>{{ token.marketcap|format_currency }}</td>
+                <td>{{ token.volume|format_currency }}</td>
+                <td>{{ token.top_20_holders }}%</td>
+                <td>{{ token.total_holders|format_number }}</td>
+                <td>{{ token.transactions|format_number }}</td>
+                <td>{{ token.price_change_5min|format_number}}</td>
             </tr>
-        </thead>
-        <tbody>
-            {% for token in tokens %}
-                <tr>
-                    <td class="degen">{{ token.ai_degen }}</td>
-                    <td>
-                        <a href="https://birdeye.so/token/{{ token.token }}?chain=solana" target="_blank">{{token.name}}</a>
-                    </td>
-                    <td>{{ datetime_friendly(token.date) }}</td>
-                    <td>{{ token.price }}</td>
-                    <td>{{ token.memeability }}</td>
-                    <td>{{ token.marketcap|format_currency }}</td>
-                    <td>{{ token.volume|format_currency }}</td>
-                    <td>{{ token.top_20_holders }}%</td>
-                    <td>{{ token.total_holders|format_number }}</td>
-                    <td>{{ token.transactions|format_number }}</td>
-                    <td>{{ token.price_change_5min|format_number}}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <h1>No tokens found</h1>
+{% endif %}
+</div>
+<div class="pagination">
+    <p>Page {{ page }}</p>
+    {% if prev_page_url %}
+        <a href="{{ prev_page_url }}" class="pagination-button">Previous</a>
     {% else %}
-        <p>No tokens found.</p>
+        <span class="pagination-button disabled">Previous</span>
     {% endif %}
-    <div class="pagination">
-        <p>Page {{ page }}</p>
-        {% if prev_page_url %}
-            <a href="{{ prev_page_url }}" class="pagination-button">Previous</a>
-        {% else %}
-            <span class="pagination-button disabled">Previous</span>
-        {% endif %}
 
-        {% if next_page_url %}
-            <a href="{{ next_page_url }}" class="pagination-button">Next</a>
-        {% else %}
-            <span class="pagination-button disabled">Next</span>
-        {% endif %}
-    </div>
-    <script>
-    function colorToEmoji(color) {
-        const colorEmojiMap = {
-            "yellow": "🟡",
-            "green": "🟢",
-            "red": "🔴",
-            "unknown": "❓",
-        };
-        return colorEmojiMap[color.toLowerCase()] || color; // Return original color if no emoji found
-    }
-    function replaceColorWithEmoji(elementId) {
-        const elements = document.querySelectorAll(elementId);
-        elements.forEach(element => {
-            const colorText = element.textContent.trim();
-            const emoji = colorToEmoji(colorText);
-            element.textContent = emoji;
-        })
-    }
-    document.addEventListener('DOMContentLoaded', function() {
-      replaceColorWithEmoji('.degen');
-    });
-    </script>
-
-</body>
-</html>
+    {% if next_page_url %}
+        <a href="{{ next_page_url }}" class="pagination-button">Next</a>
+    {% else %}
+        <span class="pagination-button disabled">Next</span>
+    {% endif %}
+</div>
+<script>
+function colorToEmoji(color) {
+    const colorEmojiMap = {
+        "yellow": "🟡",
+        "green": "🟢",
+        "red": "🔴",
+        "unknown": "❓",
+    };
+    return colorEmojiMap[color.toLowerCase()] || color; // Return original color if no emoji found
+}
+function replaceColorWithEmoji(elementId) {
+    const elements = document.querySelectorAll(elementId);
+    elements.forEach(element => {
+        const colorText = element.textContent.trim();
+        const emoji = colorToEmoji(colorText);
+        element.textContent = emoji;
+    })
+}
+document.addEventListener('DOMContentLoaded', function() {
+    replaceColorWithEmoji('.degen');
+});
+</script>
+{% endblock %}

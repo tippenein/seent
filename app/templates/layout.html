@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <title>Seery</title>
+  </head>
+  <body>
+    <h1>Seery</h1>
+    <div id="content">{% block content %}{% endblock %}</div>
+    <div id="footer">
+      {% block footer %}
+      <a href="https://github.com/tippenein/seent" target="_blank">View on github</a>
+      | <a href="https://dith.ai/" target="_blank">Learn more</a>
+      | <a href="https://twitter.com/Dither_Solana" target="_blank">Follow on X</a>
+      <p>Disclaimer: this project is loosely affiliated with Dither. Direct your questions and comments to the github issues page</p>
+      {% endblock %}
+    </div>
+  </body>
+</html>
