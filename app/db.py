@@ -6,8 +6,7 @@ from psycopg2.extras import RealDictCursor
 
 load_dotenv()
 
-ENV='dev'
-# ENV = os.getenv('ENV')
+ENV = os.getenv('ENV')
 POSTGRES_DBNAME = os.getenv('POSTGRES_DBNAME')
 POSTGRES_USER = os.getenv('POSTGRES_USER')
 POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
