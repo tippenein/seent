@@ -15,6 +15,17 @@ READABLE_TIME_FORMAT= '%b %d %H:%M'
 ENV = os.getenv('ENV')
 db = DatabaseController(DATABASE_CONFIG[DATABASE_TYPE], DATABASE_TYPE)
 
+def format_currency(value):
+    if value:
+        return "{:,.2f}".format(value)
+
+def format_number(value):
+    if value:
+        return "{:,}".format(value)
+
+app.jinja_env.filters['format_number'] = format_number
+app.jinja_env.filters['format_currency'] = format_currency
+
 @app.route('/health')
 def health():
     return jsonify(healthy=True)
@@ -71,7 +82,7 @@ def get_tokens():
     tokens = db.query_db(query, parameters)
 
     prev_page_url = url_for('get_tokens', page=page-1, query=search_query) if page > 1 else None
-    next_page_url = url_for('get_tokens', page=page+1, query=search_query) if len(tokens) <= per_page else None
+    next_page_url = url_for('get_tokens', page=page+1, query=search_query)
 
     return render_template('list_view.html',
                             tokens=tokens,
