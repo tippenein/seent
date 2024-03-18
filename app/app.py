@@ -1,5 +1,6 @@
-from flask import jsonify, Flask, redirect, request, url_for, render_template, send_file
 import base64
+from flask import jsonify, Flask, redirect, request, url_for, render_template, send_file, send_from_directory
+import sqlite3
 import os
 from datetime import datetime
 from .plot import datetime_to_epoch, get_solana_pool_address, plot_ohlc_data
@@ -25,6 +26,11 @@ def format_number(value):
 
 app.jinja_env.filters['format_number'] = format_number
 app.jinja_env.filters['format_currency'] = format_currency
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'app/static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 @app.route('/health')
 def health():
