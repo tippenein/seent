@@ -2,7 +2,41 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
+    background: #1f1f1d;
+    color: white;
   }
+
+h1 {
+    text-align: center;
+}
+form {
+    margin-bottom: 20px;
+    text-align: center;
+}
+table {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+th {
+    background-color: #00ff37;
+    color: black;
+}
+th a {
+    color: black;
+}
+tr:hover {
+    background-color: #2b2c2a;
+}
+a {
+  color: white
+}
 
   .search-container {
     padding-top: 20px; /* Adjust the value as needed for padding at the top */
@@ -26,8 +60,8 @@ body {
   /* Style the search bar on focus to make it stand out */
   #search-bar:focus {
     outline: none; /* Removes the default focus outline */
-    border-color: #0066ff; /* Changes the border color when focused */
-    box-shadow: 0 0 8px rgba(0, 102, 255, 0.5); /* Adds a glow effect */
+    border-color: #00ff37; /* Changes the border color when focused */
+    box-shadow: 0 0 8px #00a123; /* Adds a glow effect */
   }
 
   .search-form {
@@ -49,19 +83,45 @@ body {
     font-size: 18px; /* Adjust the font size as needed */
     border: none; /* No border */
     border-radius: 5px; /* Rounded corners */
-    background-color: #007bff; /* Background color */
-    color: white; /* Text color */
+    background-color: #00ff37; /* Background color */
+    color: black; /* Text color */
     cursor: pointer; /* Cursor to indicate it's clickable */
     margin-left: 10px; /* Space between the search bar and the button */
   }
 
   .submit-button:hover {
-    background-color: #0056b3; /* Darker background color on hover */
+    background-color: #00ff37; /* Darker background color on hover */
   }
 
   /* Optional: style the submit button when it's focused or active */
   .submit-button:focus,
   .submit-button:active {
     outline: none; /* Removes the default focus outline */
-    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Adds a glow effect */
+    box-shadow: 0 0 8px; /* Adds a glow effect */
   }
+
+  .pagination {
+    margin-top: 20px; /* Spacing above the pagination buttons */
+    text-align: center; /* Center the buttons */
+}
+
+.pagination-button {
+    display: inline-block;
+    padding: 10px 20px; /* Larger button size */
+    margin: 0 10px; /* Spacing between buttons */
+    background-color: #00ff37; /* Button color */
+    color: black; /* Text color */
+    text-decoration: none; /* Remove underline from links */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 16px; /* Larger text */
+}
+
+.pagination-button:hover {
+    background-color: #00ff37; /* Darker color on hover */
+}
+
+.pagination-button.disabled {
+    background-color: #cccccc; /* Grayed out button */
+    pointer-events: none; /* Disable button clicks */
+    cursor: default;
+}

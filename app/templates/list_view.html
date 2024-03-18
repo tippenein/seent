@@ -3,46 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <title>Seent</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20;
-            background-color: #f4f4f4;
-        }
-        h1 {
-            text-align: center;
-        }
-        form {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        table {
-            width: 80%;
-            margin-left: auto;
-            margin-right: auto;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #4CAF50;
-            color: white;
-        }
-        tr:hover {
-            background-color: #f5f5f5;
-        }
-    </style>
+    <title>Seery</title>
 </head>
 <body>
+    <h1>Seery</h1>
     <div class="search-container">
         <form action="/tokens" class="search-form" method="get">
             <input type="search" id="search-bar" name="query" placeholder="Search...">
             <input type="submit" value="Search" class="submit-button">
+            <a href="{{ url_for('get_tokens', sort_by=sort_by, sort_order=sort_order) }}" class="clear-query-button">Clear Query</a>
         </form>
     {% if tokens %}
     <table id="tokenTable">
@@ -51,7 +20,6 @@
                 <th>Score</th>
                 <th><a href="?sort_by=name&sort_order={{ 'desc' if sort_by == 'name' and sort_order == 'asc' else 'asc' }}">Name</a></th>
                 <th><a href="?sort_by=date&sort_order={{ 'desc' if sort_by == 'date' and sort_order == 'asc' else 'asc' }}">Date</a></th>
-                <th>Token</th>
                 <th><a href="?sort_by=price&sort_order={{ 'desc' if sort_by == 'price' and sort_order == 'asc' else 'asc' }}">Price</a></th>
                 <th><a href="?sort_by=memeability&sort_order={{ 'desc' if sort_by == 'memeability' and sort_order == 'asc' else 'asc' }}">Memeability</a></th>
                 <th><a href="?sort_by=marketcap&sort_order={{ 'desc' if sort_by == 'marketcap' and sort_order == 'asc' else 'asc' }}">Marketcap</a></th>
@@ -66,11 +34,10 @@
             {% for token in tokens %}
                 <tr>
                     <td class="degen">{{ token.ai_degen }}</td>
-                    <td>{{ token.name }}</td>
-                    <td>{{ datetime_friendly(token.date) }}</td>
                     <td>
-                        <a href="https://birdeye.so/token/{{ token.token }}?chain=solana" target="_blank">Birdeye</a>
+                        <a href="https://birdeye.so/token/{{ token.token }}?chain=solana" target="_blank">{{token.name}}</a>
                     </td>
+                    <td>{{ datetime_friendly(token.date) }}</td>
                     <td>{{ token.price }}</td>
                     <td>{{ token.memeability }}</td>
                     <td>{{ token.marketcap }}</td>
@@ -86,6 +53,20 @@
     {% else %}
         <p>No tokens found.</p>
     {% endif %}
+    <div class="pagination">
+        <p>Page {{ page }}</p>
+        {% if prev_page_url %}
+            <a href="{{ prev_page_url }}" class="pagination-button">Previous</a>
+        {% else %}
+            <span class="pagination-button disabled">Previous</span>
+        {% endif %}
+
+        {% if next_page_url %}
+            <a href="{{ next_page_url }}" class="pagination-button">Next</a>
+        {% else %}
+            <span class="pagination-button disabled">Next</span>
+        {% endif %}
+    </div>
     <script>
     function colorToEmoji(color) {
         const colorEmojiMap = {

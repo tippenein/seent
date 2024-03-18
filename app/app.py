@@ -9,6 +9,9 @@ app = Flask(__name__)
 
 DEBUG=False
 
+DB_TIME_FORMAT='%Y-%m-%d %H:%M:%S'
+READABLE_TIME_FORMAT= '%b %d %H:%M'
+
 ENV = os.getenv('ENV')
 db = DatabaseController(DATABASE_CONFIG[DATABASE_TYPE], DATABASE_TYPE)
 
@@ -37,14 +40,6 @@ def home():
 #     # Render the template with the plot
 #     return render_template('plot.html', plot_url=plot_url)
 
-# fuck, this is dumber than copy pasta
-def makeDBString(s):
-    sqlite = ENV == 'dev'
-    if sqlite:
-        return f":{s}"
-    else:
-        return f"%({s})s"
-
 @app.route('/tokens')
 def get_tokens():
     search_query = request.args.get('query', '')
@@ -56,9 +51,9 @@ def get_tokens():
     offset = (page - 1) * per_page
 
     def datetime_friendly(dt):
-        datetime_obj = datetime.strptime(dt, '%Y-%m-%d %H:%M:%S')
+        datetime_obj = datetime.strptime(dt, DB_TIME_FORMAT)
 
-        return datetime_obj.strftime('%b %d %H:%M')
+        return datetime_obj.strftime(READABLE_TIME_FORMAT)
 
     if search_query:
         parameters = {'search_query': f"%{search_query}%"}
@@ -75,7 +70,18 @@ def get_tokens():
 
     tokens = db.query_db(query, parameters)
 
-    return render_template('list_view.html', tokens=tokens, sort_by=sort_by, sort_order=sort_order, datetime_friendly=datetime_friendly)
+    prev_page_url = url_for('get_tokens', page=page-1, query=search_query) if page > 1 else None
+    next_page_url = url_for('get_tokens', page=page+1, query=search_query) if len(tokens) <= per_page else None
+
+    return render_template('list_view.html',
+                            tokens=tokens,
+                            sort_by=sort_by,
+                            sort_order=sort_order,
+                            datetime_friendly=datetime_friendly,
+                            prev_page_url=prev_page_url,
+                            next_page_url=next_page_url,
+                            page=page
+                            )
 
 # @app.route('/tokens/<token>')
 # def token_detail(token):
