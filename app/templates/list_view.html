@@ -37,9 +37,6 @@
                 </td>
                 <td>
                    <a href="{{ url_for('token_detail', token=token.token)}}">{{token.name}}</a>
-                 </td>
-                <td>
-                    <a href="https://birdeye.so/token/{{ token.token }}?chain=solana" target="_blank">{{token.name}}</a>
                 </td>
                 <td>{{ datetime_friendly(token.date) }}</td>
                 <td>{{ token.price }}</td>
