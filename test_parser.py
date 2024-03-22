@@ -5,60 +5,59 @@ from seer_parser import parse_token_data
 class TestTokenDataParsing(unittest.TestCase):
     def setUp(self):
         self.text = """
-        Address: EBrMAYymNrAkgmmEkeZ23dhKe6oAT5ZwMXPPMEFDSDUp
+        Address: B45QLZLZNwHo5ya5TQdjkE6A4xLCvNYvcRtjvFFZ9T72
 
-        Pair: THPS2/SOL
-
-        🏦Financials🏦
-        Price: $7.38e-06
-        Latest Marketcap: $6.20k
-        Transactions: 0
-        Price Change: -0.12%
-        Volume: $307.61k
+        Name: doege
 
         📊Ratings📊
-        Memeability: 9.9/10
-        AI Degen: 🔴 - Red
+        Memeability: 9.4/10
+        AI Degen: 🟡 - Yellow
+        Name Originality: 5.8/10
+        Description Originality: 10/10
+
+        🏦Financials🏦
+        Price: $0.114
+        Liquidity: $98.61k
+        Latest Marketcap: $1.10M
+        Transactions: 722
+        5m Price Change: 20.54%
+        Volume: $49.42k
 
         🔒Security🔒
-        Top 20 Holders: 75.8%
-        Total Holders: 133
+        Top 20 Holders: 29.9%
+        Total Holders: 3822
+
+        Seer v1.35
+
         """
 
     def test_parsing(self):
         data = parse_token_data(self.text)
-        self.assertEqual(data['token'], "EBrMAYymNrAkgmmEkeZ23dhKe6oAT5ZwMXPPMEFDSDUp")
-        self.assertEqual(data['marketcap'], 6200)
-        self.assertEqual(data['price_change'], -0.12)
-        self.assertEqual(data['top_20_holders'], 75.8)
-        self.assertEqual(data['total_holders'], 133)
+        self.assertEqual(data['token'], "B45QLZLZNwHo5ya5TQdjkE6A4xLCvNYvcRtjvFFZ9T72")
+        self.assertEqual(data['marketcap'], 1100000)
+        self.assertEqual(data['price_change_5min'], 20.54)
+        self.assertEqual(data['volume'], 49420)
+        self.assertEqual(data['name'], "doege")
 
-    def test_volume(self):
+    def test_security(self):
         data = parse_token_data(self.text)
-        self.assertEqual(data['volume'], 307610)
+        self.assertEqual(data['top_20_holders'], 29.9)
+        self.assertEqual(data['total_holders'], 3822)
+
+    def test_meme(self):
+        data = parse_token_data(self.text)
+        self.assertEqual(data['memeability'], 9.4)
+        self.assertEqual(data['name_originality'], 5.8)
+        self.assertEqual(data['ai_degen'], 'yellow')
+        self.assertEqual(data['description_originality'], 10.0)
 
     def test_millions(self):
         data = parse_token_data("Volume: $139.78M")
         self.assertEqual(data['volume'], 139780000)
 
-    def test_name(self):
+    def test_version(self):
         data = parse_token_data(self.text)
-        self.assertEqual(data['name'], "THPS2/SOL")
+        self.assertEqual(data['version'], 'v1.35')
 
-    def test_price(self):
-        data = parse_token_data(self.text)
-        self.assertEqual(data['price'], 7.38e-06)
-
-    def test_meme(self):
-        data = parse_token_data(self.text)
-        self.assertEqual(data['memeability'], 9.9)
-
-    def test_ai_degen(self):
-        data = parse_token_data(self.text)
-        self.assertEqual(data['ai_degen'], 'red')
-
-    # Add more test methods for each piece of data...
-
-# Run the tests
 if __name__ == '__main__':
     unittest.main()

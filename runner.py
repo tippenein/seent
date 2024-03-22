@@ -1,5 +1,5 @@
 from telethon import TelegramClient
-from telethon.tl.types import PeerChannel
+from telethon.tl.types import InputPeerChannel
 import sqlite3
 from datetime import datetime
 import re
@@ -9,21 +9,34 @@ from dotenv import load_dotenv
 from seer_parser import parse_token_data
 import os
 
+# current seer version handled
+CURRENT_VERSION='v1.35'
+
 load_dotenv()
 
 # Retrieve the API ID, API HASH, and PHONE from environment variables
 api_id = os.getenv('API_ID')
 api_hash = os.getenv('API_HASH')
 phone = os.getenv('PHONE')
-channel_username = PeerChannel(2015897529)
+megagroup_id = os.getenv('MEGAGROUP_ID')
+megagroup_access_hash = os.getenv('MEGAGROUP_ACCESS_HASH')
+# https://web.telegram.org/a/#-1002037088573_20
+parent_message_id = 20
 
 
-async def fetch_messages(client, channel, limit=500, delay=1):
+async def fetch_messages(client, limit=500, delay=1):
     messages = []
     offset_id = 0
+    megagroup_entity = InputPeerChannel(channel_id=int(megagroup_id), access_hash=int(megagroup_access_hash))
+
     while len(messages) < limit:
         # Fetch a batch of messages
-        batch = await client.get_messages(channel, limit=min(100, limit - len(messages)), offset_id=offset_id)
+        batch = await client.get_messages(
+                megagroup_entity,
+                limit=min(100, limit - len(messages)),
+                offset_id=offset_id,
+                reply_to=parent_message_id
+            )
         messages.extend(batch)
 
         # Check if we have fetched all messages
@@ -52,7 +65,10 @@ def setup_db(conn):
             name TEXT,
             price REAL,
             marketcap REAL,
+            liquidity REAL,
             memeability REAL,
+            name_originality REAL,
+            description_originality REAL,
             volume integer,
             ai_degen TEXT,
             top_20_holders REAL,
@@ -65,9 +81,6 @@ def setup_db(conn):
 
 
 def insert(conn, data, date, id):
-    # Convert the datetime object to a string in the SQLite datetime format
-
-    # Start a transaction
     cursor = conn.cursor()
     try:
         # Check if the ID already exists
@@ -78,27 +91,26 @@ def insert(conn, data, date, id):
         if not exists:
             cursor.execute('''
             INSERT INTO token_data (
-                id, date, token, name, price, marketcap, memeability, volume, ai_degen, top_20_holders,
+                id, date, token, name, price, marketcap, liquidity, memeability, name_originality,
+                description_originality, volume, ai_degen, top_20_holders,
                 total_holders, transactions, price_change_5min
             ) VALUES (
-                :id, :date, :token, :name, :price, :marketcap, :memeability, :volume, :ai_degen, :top_20_holders,
+                :id, :date, :token, :name, :price, :marketcap, :liquidity, :memeability, :name_originality,
+                :description_originality, :volume, :ai_degen, :top_20_holders,
                 :total_holders, :transactions, :price_change_5min
             )
             ''', {'id': id, 'date': date, **data})
 
-            # Commit the changes if the insert was successful
             conn.commit()
             return 1
         else:
             print(f"Entry with ID {id} already exists. Skipping insert.")
             return 0
     except sqlite3.Error as e:
-        # If an error occurs, rollback the transaction
         conn.rollback()
         print(f"An error occurred: {e}")
         return 0
     finally:
-        # Close the cursor
         cursor.close()
 
 async def main():
@@ -116,19 +128,19 @@ async def main():
         except:
             await client.sign_in(password=input('Password: '))
 
-    # Access the channel
-    channel = await client.get_entity(channel_username)
-
-    # arbitrary limit of 1000
-    messages = await fetch_messages(client, channel, limit=150, delay=1)
+    # arbitrary limit
+    messages = await fetch_messages(client, limit=70, delay=1)
 
     count = 0
     for message in messages:
-        id = message.id
+        id = message.id + 5000 # offset because the old version ids overlap
         date = message.date
         date_str = date.strftime('%Y-%m-%d %H:%M:%S')
         token_data = parse_token_data(message.message) if message.message else None
-        if token_data:
+        # if token_data['version'] != CURRENT_VERSION:
+        #     print("Warning: parser version out of date")
+
+        if token_data is not None:
             count += insert(conn, token_data, date_str, id)
         else:
             print(f"An error occurred for message {id} at {date_str}")
@@ -138,3 +150,4 @@ async def main():
 
 with client:
     client.loop.run_until_complete(main())
+

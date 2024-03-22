@@ -37,22 +37,17 @@ def parse_volume(volume_str):
 def parse_token_data(raw_text):
     data = {}
     token_pattern = re.compile(r'Address: ([-\w.]+)')
-    name_pattern = re.compile(r'Pair: ([-\$\w./]+)')
+    name_pattern = re.compile(r'Name: ([-\$\w./]+)')
     price_pattern = re.compile(r'Price: \$(\S+)')
     memeability_pattern = re.compile(r'Memeability: ([\d.]+)/10')
     ai_degen_pattern = re.compile(r'AI Degen: (\S+)')
     top_holders_pattern = re.compile(r'Top 20 Holders: ([\d.]+)')
     total_holders_pattern = re.compile(r'Total Holders: (\d+)')
     transactions_pattern = re.compile(r'Transactions: (\d+)')
+    version_pattern = re.compile(r'Seer ([-\$\w./]+)')
 
-    price_change_pattern = re.compile(r'Price Change: ([-\d.]+)%')
-    price_change_match = price_change_pattern.search(raw_text)
-    if price_change_match:
-        data['price_change'] = float(price_change_match.group(1))
-    else:
-        data['price_change'] = None
 
-    volume_pattern = re.compile(r'Volume: ([\d.]+[kMB]?)')
+    volume_pattern = re.compile(r'Volume: \$([\d.]+[kMB]?)')
     volume_match = volume_pattern.search(raw_text)
     if volume_match:
         data['volume'] = parse_volume(volume_match.group(1))
@@ -62,16 +57,34 @@ def parse_token_data(raw_text):
     marketcap_pattern = re.compile(r'Latest Marketcap: \$([\d.]+[kMB]?)')
     marketcap_match = marketcap_pattern.search(raw_text)
     if marketcap_match:
-        # Convert the marketcap string to a float value
         data['marketcap'] = parse_marketcap(marketcap_match.group(1))
     else:
         data['marketcap'] = None
+    liquidity_pattern = re.compile(r'Liquidity: \$([\d.]+[kMB]?)')
+    liquidity_match = liquidity_pattern.search(raw_text)
+    if liquidity_match:
+        data['liquidity'] = parse_marketcap(liquidity_match.group(1))
+    else:
+        data['liquidity'] = None
 
     memeability_match = memeability_pattern.search(raw_text)
     if memeability_match:
         data['memeability'] = float(memeability_match.group(1))
     else:
         data['memeability'] = None
+
+    name_originality_pattern = re.compile(r'Name Originality: ([\d.]+)/10')
+    name_originality_match = name_originality_pattern.search(raw_text)
+    if name_originality_match:
+        data['name_originality'] = float(name_originality_match.group(1))
+    else:
+        data['name_originality'] = None
+    description_originality_pattern = re.compile(r'Description Originality: ([\d.]+)/10')
+    description_originality_match = description_originality_pattern.search(raw_text)
+    if description_originality_match:
+        data['description_originality'] = float(description_originality_match.group(1))
+    else:
+        data['description_originality'] = None
 
     ai_degen_match = ai_degen_pattern.search(raw_text)
     data['ai_degen'] = degen_color(ai_degen_match.group(1)) if ai_degen_match else None
@@ -94,8 +107,15 @@ def parse_token_data(raw_text):
     transactions_match = transactions_pattern.search(raw_text)
     data['transactions'] = int(transactions_match.group(1)) if transactions_match else 0
 
+    price_change_pattern = re.compile(r'5m Price Change: ([-\d.]+)%')
     price_change_5min_match = price_change_pattern.search(raw_text)
     data['price_change_5min'] = float(price_change_5min_match.group(1)) if price_change_5min_match else 0.0
+
+    version_match = version_pattern.search(raw_text)
+    if version_match:
+        data['version'] = version_match.group(1)
+    else:
+        data['version'] = None
 
 
     return data
