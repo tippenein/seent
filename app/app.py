@@ -72,6 +72,13 @@ def get_tokens():
 
         return datetime_obj.strftime(READABLE_TIME_FORMAT)
 
+    summary = db.query_db("""SELECT
+        COUNT(*) AS total,
+        SUM(CASE WHEN ai_degen = 'green' THEN 1 ELSE 0 END) AS green,
+        AVG(marketcap) AS average_marketcap
+        FROM
+        token_data""", {})
+
     if search_query:
         parameters = {'search_query': f"%{search_query}%"}
         if ENV == 'dev':
@@ -92,6 +99,7 @@ def get_tokens():
 
     return render_template('list_view.html',
                             tokens=tokens,
+                            summary=summary[0],
                             sort_by=sort_by,
                             sort_order=sort_order,
                             datetime_friendly=datetime_friendly,

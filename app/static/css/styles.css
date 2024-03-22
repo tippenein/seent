@@ -48,7 +48,7 @@ a {
 }
 
   .search-container {
-    padding-top: 20px; /* Adjust the value as needed for padding at the top */
+    padding-top: 10px; /* Adjust the value as needed for padding at the top */
     text-align: center; /* Center the search bar */
   }
 
@@ -133,4 +133,22 @@ a {
     background-color: #cccccc; /* Grayed out button */
     pointer-events: none; /* Disable button clicks */
     cursor: default;
+}
+.summary-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+.summary-item {
+  margin: 10px 0;
+}
+.summary-label {
+  font-weight: bold;
+}
+.summary-value {
+  margin-left: 10px;
 }

@@ -1,5 +1,22 @@
 {% extends "layout.html" %}
 {% block content %}
+<div class="summary-container">
+  <div class="summary-item">
+    <span class="summary-label">Total calls</span>
+    <span class="summary-value" id="total">{{ summary.total }}</span>
+  </div>
+  <div class="summary-item">
+    <span class="summary-label">Green calls</span>
+    <span class="summary-value" id="green-ai-degen-count">{{ summary.green }}</span>
+  </div>
+  <div class="summary-item">
+    <span class="summary-label">Average Market Cap</span>
+    <span class="summary-value" id="average-marketcap">
+      {{ summary.average_marketcap|format_currency}}
+    </span>
+  </div>
+</div>
+
 <div class="search-container">
     <form action="/tokens" class="search-form" method="get">
         <input type="search" id="search-bar" name="query" placeholder="Search...">
