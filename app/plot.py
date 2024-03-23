@@ -168,6 +168,7 @@ def get_solana_pool_address(token_address):
 
     response = requests.get(api_url, headers=headers)
     data = response.json()
+    print(data)
 
     # If override is True, return the first pool's address, if available
     if "data" in data and data["data"]:
