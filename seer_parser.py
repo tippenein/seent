@@ -37,7 +37,8 @@ def parse_volume(volume_str):
 def parse_token_data(raw_text):
     data = {}
     token_pattern = re.compile(r'Address: ([-\w.]+)')
-    name_pattern = re.compile(r'Name: ([-\$\w./]+)')
+    name_pattern = re.compile(r'Name: (.+)', re.UNICODE)
+
     price_pattern = re.compile(r'Price: \$(\S+)')
     memeability_pattern = re.compile(r'Memeability: ([\d.]+)/10')
     ai_degen_pattern = re.compile(r'AI Degen: (\S+)')

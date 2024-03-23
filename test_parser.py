@@ -59,5 +59,9 @@ class TestTokenDataParsing(unittest.TestCase):
         data = parse_token_data(self.text)
         self.assertEqual(data['version'], 'v1.35')
 
+    def test_emoji_name(self):
+        data = parse_token_data("Name: 🦔 Sonik The Hedgehog AI")
+        self.assertEqual(data['name'], "🦔 Sonik The Hedgehog AI")
+
 if __name__ == '__main__':
     unittest.main()
