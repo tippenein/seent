@@ -117,14 +117,13 @@ def get_tokens():
 def token_detail(token, date):
     dt = 14400
     bot_timestamp = int(datetime_to_epoch(date) - dt)
-    print(token)
-    print(date)
     pool_address = get_solana_pool_address(token)
-    image = plot_ohlc_data(pool_address, bot_timestamp)
-    if image is not None:
-        # Encode the image bytes to base64
-        image_base64 = base64.b64encode(image).decode('utf-8')
-        return render_template('plot.html', token=token, image=image_base64)
+    if pool_address is not None:
+        image = plot_ohlc_data(pool_address, bot_timestamp)
+        if image is not None:
+            # Encode the image bytes to base64
+            image_base64 = base64.b64encode(image).decode('utf-8')
+            return render_template('plot.html', token=token, image=image_base64)
     else:
         print("shit")
         return "Could not generate plot", 404
