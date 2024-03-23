@@ -113,12 +113,12 @@ def get_tokens():
                             ai_degen=ai_degen
                             )
 
-@app.route('/tokens/<token>')
-def token_detail(token):
-    date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    bot_timestamp = int(datetime_to_epoch(date) - 18000*2)
-    print("fetching plot data")
+@app.route('/tokens/<token>/<date>')
+def token_detail(token, date):
+    dt = 14400
+    bot_timestamp = int(datetime_to_epoch(date) - dt)
+    print(token)
+    print(date)
     pool_address = get_solana_pool_address(token)
     image = plot_ohlc_data(pool_address, bot_timestamp)
     if image is not None:

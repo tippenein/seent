@@ -179,13 +179,14 @@ def get_solana_pool_address(token_address):
 def plot_ohlc_data(pool_address, bot_timestamp, color="unknown"):
     data, meta = fetch_ohlc_data(pool_address, bot_timestamp)
     shifted_data = data["attributes"]["ohlcv_list"]
+    dt = 0
     for t in shifted_data:
-        t[0] = t[0] - 18000
+        t[0] = t[0] - dt
 
     df = process_data(shifted_data)
 
     bot_timestamp = pd.to_datetime(bot_timestamp, unit="s")
-    start_time = bot_timestamp - pd.Timedelta(minutes=10)
+    start_time = bot_timestamp - pd.Timedelta(minutes=120)
     filtered_df = df[df["timestamp"] >= start_time]
     if filtered_df.empty:
         filtered_df = df
