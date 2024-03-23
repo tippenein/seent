@@ -45,31 +45,16 @@ def health():
 def home():
     return redirect(url_for('get_tokens'))
 
-# @app.route('/all')
-# def top():
-#     # Fetch and process data from the local database
-#     data = plot.plot_ohlc_data()
-
-
-#     # Generate a plot
-#     img = io.BytesIO()
-#     plt.figure()
-#     data.plot(kind='bar')
-#     plt.savefig(img, format='png')
-#     img.seek(0)
-#     plot_url = base64.b64encode(img.getvalue()).decode()
-
-#     # Render the template with the plot
-#     return render_template('plot.html', plot_url=plot_url)
-
 @app.route('/tokens')
 def get_tokens():
     search_query = request.args.get('query', '')
+    print(request.args)
 
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 20, type=int)
     sort_by = request.args.get('sort_by', 'date')
     sort_order = request.args.get('sort_order', 'asc')
+    ai_degen = request.args.get('ai_degen', None)
     offset = (page - 1) * per_page
 
     def datetime_friendly(dt):
@@ -85,7 +70,7 @@ def get_tokens():
             SELECT COUNT(*) AS daily_count
             FROM token_data
             GROUP BY DATE(date)
-        )) AS average_entries_per_day
+        ) as sub_query) AS average_entries_per_day
         FROM
         token_data""", {})
 
@@ -96,16 +81,25 @@ def get_tokens():
         else:
             query = f"SELECT * FROM token_data WHERE name ILIKE %(search_query)s"
     else:
-        parameters = {'limit': per_page, 'offset': offset}
+        parameters = {'limit': per_page, 'offset': offset }
+
+        where_clause = ""
+        if ai_degen:
+            parameters['ai_degen'] = ai_degen
+            where_clause = "where ai_degen = "
+            if ENV == 'dev':
+                where_clause += ":ai_degen"
+            else:
+                where_clause += "%(ai_degen)s"
         if ENV == 'dev':
-            query = f"SELECT * FROM token_data order by {sort_by} {sort_order} LIMIT :limit OFFSET :offset"
+            query = f"SELECT * FROM token_data {where_clause} order by {sort_by} {sort_order} LIMIT :limit OFFSET :offset"
         else:
-            query = f"SELECT * FROM token_data order by {sort_by} {sort_order} LIMIT %(limit)s OFFSET %(offset)s"
+            query = f"SELECT * FROM token_data {where_clause} order by {sort_by} {sort_order} LIMIT %(limit)s OFFSET %(offset)s"
 
     tokens = db.query_db(query, parameters)
 
-    prev_page_url = url_for('get_tokens', page=page-1, query=search_query) if page > 1 else None
-    next_page_url = url_for('get_tokens', page=page+1, query=search_query)
+    prev_page_url = url_for('get_tokens', page=page-1, query=search_query, ai_degen=ai_degen) if page > 1 else None
+    next_page_url = url_for('get_tokens', page=page+1, query=search_query, ai_degen=ai_degen)
 
     return render_template('list_view.html',
                             tokens=tokens,
@@ -115,7 +109,8 @@ def get_tokens():
                             datetime_friendly=datetime_friendly,
                             prev_page_url=prev_page_url,
                             next_page_url=next_page_url,
-                            page=page
+                            page=page,
+                            ai_degen=ai_degen
                             )
 
 @app.route('/tokens/<token>')
