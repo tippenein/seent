@@ -24,13 +24,18 @@ def format_number(value):
     if value:
         return "{:,}".format(value)
 
+def format_whole(value):
+    if value is not None:
+        return "{:,}".format(int(value))
+
 app.jinja_env.filters['format_number'] = format_number
 app.jinja_env.filters['format_currency'] = format_currency
+app.jinja_env.filters['format_whole'] = format_whole
 
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'app/static'),
-                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
+# @app.route('/favicon.ico')
+# def favicon():
+#     return send_from_directory(os.path.join(app.root_path, 'app/static'),
+#                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 @app.route('/health')
 def health():
@@ -70,12 +75,17 @@ def get_tokens():
     def datetime_friendly(dt):
         datetime_obj = datetime.strptime(dt, DB_TIME_FORMAT)
 
-        return datetime_obj.strftime(READABLE_TIME_FORMAT)
+        return {'readable': datetime_obj.strftime(READABLE_TIME_FORMAT), 'dt': datetime_obj}
 
     summary = db.query_db("""SELECT
         COUNT(*) AS total,
         SUM(CASE WHEN ai_degen = 'green' THEN 1 ELSE 0 END) AS green,
-        AVG(marketcap) AS average_marketcap
+        AVG(marketcap) AS average_marketcap,
+        (SELECT ROUND(AVG(daily_count)) FROM (
+            SELECT COUNT(*) AS daily_count
+            FROM token_data
+            GROUP BY DATE(date)
+        )) AS average_entries_per_day
         FROM
         token_data""", {})
 

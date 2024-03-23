@@ -10,9 +10,15 @@
     <span class="summary-value" id="green-ai-degen-count">{{ summary.green }}</span>
   </div>
   <div class="summary-item">
-    <span class="summary-label">Average Market Cap</span>
+    <span class="summary-label">Average marketcap</span>
     <span class="summary-value" id="average-marketcap">
       {{ summary.average_marketcap|format_currency}}
+    </span>
+  </div>
+  <div class="summary-item">
+    <span class="summary-label">Average calls per day</span>
+    <span class="summary-value">
+      {{ summary.average_entries_per_day|format_whole}}
     </span>
   </div>
 </div>
@@ -55,7 +61,7 @@
                 <td>
                    <a href="{{ url_for('token_detail', token=token.token)}}">{{token.name}}</a>
                 </td>
-                <td>{{ datetime_friendly(token.date) }}</td>
+                <td>{{ datetime_friendly(token.date)['readable'] }}</td>
                 <td>{{ token.price }}</td>
                 <td>{{ token.memeability }}</td>
                 <td>{{ token.marketcap|format_currency }}</td>
