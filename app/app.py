@@ -126,4 +126,4 @@ def token_detail(token, date):
             return render_template('plot.html', token=token, image=image_base64)
     else:
         print("shit")
-        return "Could not generate plot", 404
+        return render_template('404.html', message=f"Could not find {token}")

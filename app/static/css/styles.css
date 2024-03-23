@@ -158,3 +158,16 @@ a {
 .summary-value {
   margin-left: 10px;
 }
+.back-button {
+  padding: 10px 20px;
+  text-decoration: none;
+  color: white;
+  background-color: #00ff37;
+  border: none;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+.back-button:hover {
+  background-color: #00ff37;
+}
