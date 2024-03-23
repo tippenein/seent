@@ -84,7 +84,7 @@ def get_tokens():
         parameters = {'limit': per_page, 'offset': offset }
 
         where_clause = ""
-        if ai_degen:
+        if ai_degen is not None:
             parameters['ai_degen'] = ai_degen
             where_clause = "where ai_degen = "
             if ENV == 'dev':
@@ -94,7 +94,7 @@ def get_tokens():
         if ENV == 'dev':
             query = f"SELECT * FROM token_data {where_clause} order by {sort_by} {sort_order} LIMIT :limit OFFSET :offset"
         else:
-            query = f"SELECT * FROM token_data {where_clause} order by {sort_by} {sort_order} LIMIT %(limit)s OFFSET %(offset)s"
+            query = f"SELECT * FROM token_data {where_clause} order by {sort_by} {sort_order} NULLS LAST LIMIT %(limit)s OFFSET %(offset)s"
 
     tokens = db.query_db(query, parameters)
 

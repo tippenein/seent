@@ -9,6 +9,12 @@ body {
 h1 {
     text-align: center;
 }
+h1 a {
+    text-decoration: none;
+}
+h1 a:hover {
+    color: #00ff37;
+}
 form {
     margin-bottom: 20px;
     text-align: center;

@@ -51,16 +51,16 @@
         <tr>
             <th>Score</th>
             <th></th>
-            <th><a href="?sort_by=name&sort_order={{ 'desc' if sort_by == 'name' and sort_order == 'asc' else 'asc' }}&ai_degen={{ai_degen}}">Name</a></th>
-            <th><a href="?sort_by=date&sort_order={{ 'desc' if sort_by == 'date' and sort_order == 'asc' else 'asc' }}&ai_degen={{ai_degen}}">Date</a></th>
-            <th><a href="?sort_by=price&sort_order={{ 'desc' if sort_by == 'price' and sort_order == 'asc' else 'asc' }}&ai_degen={{ai_degen}}">Price</a></th>
-            <th><a href="?sort_by=memeability&sort_order={{ 'desc' if sort_by == 'memeability' and sort_order == 'asc' else 'asc' }}&ai_degen={{ai_degen}}">Memeability</a></th>
-            <th><a href="?sort_by=marketcap&sort_order={{ 'desc' if sort_by == 'marketcap' and sort_order == 'asc' else 'asc' }}&ai_degen={{ai_degen}}">Marketcap</a></th>
-            <th><a href="?sort_by=volume&sort_order={{ 'desc' if sort_by == 'volume' and sort_order == 'asc' else 'asc' }}&ai_degen={{ai_degen}}">Volume 24h</a></th>
-            <th><a href="?sort_by=top_20_holders&sort_order={{ 'desc' if sort_by == 'top_20_holders' and sort_order == 'asc' else 'asc' }}&ai_degen={{ai_degen}}">Top 20 holders</a></th>
-            <th><a href="?sort_by=total_holders&sort_order={{ 'desc' if sort_by == 'total_holders' and sort_order == 'asc' else 'asc' }}&ai_degen={{ai_degen}}">Total hodlers</a></th>
-            <th><a href="?sort_by=transactions&sort_order={{ 'desc' if sort_by == 'transactions' and sort_order == 'asc' else 'asc' }}&ai_degen={{ai_degen}}">Transactions</a></th>
-            <th><a href="?sort_by=price_change_5min&sort_order={{ 'desc' if sort_by == 'price_change_5min' and sort_order == 'asc' else 'asc' }}&ai_degen={{ai_degen}}">Price change 5min</a></th>
+            <th><a href="?sort_by=name&sort_order={{ 'desc' if sort_by == 'name' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Name</a></th>
+            <th><a href="?sort_by=date&sort_order={{ 'desc' if sort_by == 'date' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Date</a></th>
+            <th><a href="?sort_by=price&sort_order={{ 'desc' if sort_by == 'price' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Price</a></th>
+            <th><a href="?sort_by=memeability&sort_order={{ 'desc' if sort_by == 'memeability' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Memeability</a></th>
+            <th><a href="?sort_by=marketcap&sort_order={{ 'desc' if sort_by == 'marketcap' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Marketcap</a></th>
+            <th><a href="?sort_by=volume&sort_order={{ 'desc' if sort_by == 'volume' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Volume 24h</a></th>
+            <th><a href="?sort_by=top_20_holders&sort_order={{ 'desc' if sort_by == 'top_20_holders' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Top 20 holders</a></th>
+            <th><a href="?sort_by=total_holders&sort_order={{ 'desc' if sort_by == 'total_holders' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Total hodlers</a></th>
+            <th><a href="?sort_by=transactions&sort_order={{ 'desc' if sort_by == 'transactions' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Transactions</a></th>
+            <th><a href="?sort_by=price_change_5min&sort_order={{ 'desc' if sort_by == 'price_change_5min' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Price change 5min</a></th>
         </tr>
     </thead>
     <tbody>

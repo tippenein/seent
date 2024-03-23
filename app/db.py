@@ -28,6 +28,7 @@ DATABASE_CONFIG = {
 
 # Choose the database type here ('sqlite' or 'postgres')
 def get_database_type():
+  print(ENV)
   if ENV == 'dev':
     print("using sqlite")
     return 'sqlite'
