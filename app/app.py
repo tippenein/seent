@@ -53,7 +53,7 @@ def get_tokens():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 20, type=int)
     sort_by = request.args.get('sort_by', 'date')
-    sort_order = request.args.get('sort_order', 'asc')
+    sort_order = request.args.get('sort_order', 'desc')
     ai_degen = request.args.get('ai_degen', None)
     offset = (page - 1) * per_page
 

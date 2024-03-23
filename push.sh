@@ -38,6 +38,7 @@ PGPASSWORD=$POSTGRES_PASSWORD psql "sslmode=require \
 BEGIN;
 DROP TABLE IF EXISTS $TABLE_NAME;
 \i postgres_ready_dump.sql
+\i db/indexes.sql
 COMMIT;
 EOF
 

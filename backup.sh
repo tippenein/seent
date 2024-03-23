@@ -4,4 +4,4 @@
 datetime=$(date +"%Y%m%d-%H%M%S")
 
 # Copy the database file to a new file with the datetime suffix
-cp seent.db "backups/seent.db.bak.$datetime"
+cp seent.db "db/backups/seent.db.bak.$datetime"

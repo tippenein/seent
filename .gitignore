@@ -3,8 +3,7 @@ venv/
 *.session
 .env
 *.bak
-/backups/*
-!/backups/.keep
+/db/backups/*
 .vercel
 dump.sql
 *.pyc
