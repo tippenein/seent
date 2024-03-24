@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Load environment variables from .env file
+if [ -f .env ]; then
+  export $(grep -v '^#' .env | xargs)
+else
+  echo ".env file not found"
+  exit 1
+fi
+
+echo "connecting to $POSTGRES_HOST"
+echo "$POSTGRES_HOST"
+echo "$POSTGRES_USER"
+echo "$POSTGRES_DBNAME"
+echo "$POSTGRES_PORT"
+# Execute the SQL within a transaction in PostgreSQL
+PGPASSWORD=$POSTGRES_PASSWORD psql "sslmode=require \
+  host=$POSTGRES_HOST \
+  user=$POSTGRES_USER \
+  dbname=$POSTGRES_DBNAME \
+  port=$POSTGRES_PORT"
