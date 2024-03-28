@@ -117,7 +117,7 @@ def get_tokens():
 
 @app.route('/tokens/<token>/<date>')
 def token_detail(token, date):
-    dt = 14400
+    dt = 7200
     bot_timestamp = int(datetime_to_epoch(date) - dt)
     pool_address = get_solana_pool_address(token)
     if pool_address is not None:
