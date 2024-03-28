@@ -1,7 +1,9 @@
 {% extends "layout.html" %}
 {% block content %}
-    <div style="display:flex; flex-direction: column; justify-content: center; align-items: center">
-        <a href="{{ url_for('get_tokens') }}" class="back-button">&larr; Back</a>
-        <img src="data:image/png;base64,{{ image }}" alt="{{ token }} OHLC Plot">
+<div class="chart-container">
+    <div class="chart-wrapper">
+        <a href="{{ url_for('get_tokens') }}" class="dither-button back-button">&larr; Back</a>
+        <img src="data:image/png;base64,{{ image }}" alt="{{ token }} OHLC Plot" class="chart-image">
     </div>
+</div>
 {% endblock %}

@@ -65,6 +65,8 @@ def get_tokens():
     summary = db.query_db("""SELECT
         COUNT(*) AS total,
         SUM(CASE WHEN ai_degen = 'green' THEN 1 ELSE 0 END) AS green,
+        SUM(CASE WHEN ai_degen = 'red' THEN 1 ELSE 0 END) AS red,
+        SUM(CASE WHEN ai_degen = 'yellow' THEN 1 ELSE 0 END) AS yellow,
         AVG(marketcap) AS average_marketcap,
         (SELECT ROUND(AVG(daily_count)) FROM (
             SELECT COUNT(*) AS daily_count
@@ -119,7 +121,7 @@ def token_detail(token, date):
     bot_timestamp = int(datetime_to_epoch(date) - dt)
     pool_address = get_solana_pool_address(token)
     if pool_address is not None:
-        image = plot_ohlc_data(pool_address, bot_timestamp)
+        image, return_stats = plot_ohlc_data(pool_address, bot_timestamp)
         if image is not None:
             # Encode the image bytes to base64
             image_base64 = base64.b64encode(image).decode('utf-8')

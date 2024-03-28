@@ -1,71 +1,93 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="summary-container">
-  <div class="summary-item">
-    <span class="summary-label">Total calls</span>
-    <span class="summary-value" id="total">{{ summary.total }}</span>
-  </div>
-  <div class="summary-item">
-    <span class="summary-label">Green calls</span>
-    <span class="summary-value" id="green-ai-degen-count">{{ summary.green }}</span>
-  </div>
-  <div class="summary-item">
-    <span class="summary-label">Average marketcap</span>
-    <span class="summary-value" id="average-marketcap">
-      {{ summary.average_marketcap|format_currency}}
-    </span>
-  </div>
-  <div class="summary-item">
-    <span class="summary-label">Average calls per day</span>
-    <span class="summary-value">
-      {{ summary.average_entries_per_day|format_whole}}
-    </span>
-  </div>
-</div>
-<div class="search-container">
-    <form action="{{ url_for('get_tokens') }}" class="search-form" method="get" id="searchForm">
-        <input type="search" id="search-bar" name="query" placeholder="Search..." value="{{ request.args.get('query', '') }}">
-        <input type="submit" value="Search" class="submit-button">
-        <a href="{{ url_for('get_tokens', sort_by=sort_by, sort_order=sort_order) }}" class="clear-query-button">Clear Query</a>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/list_view.css') }}">
 
-        <div class="color-filters">
-            <label>
-                <input type="radio" name="ai_degen" value="red" {% if request.args.get('ai_degen') == 'red' %}checked{% endif %} onchange="document.getElementById('searchForm').submit();">
-                Red
-            </label>
-            <label>
-                <input type="radio" name="ai_degen" value="yellow" {% if request.args.get('ai_degen') == 'yellow' %}checked{% endif %} onchange="document.getElementById('searchForm').submit();">
-                Yellow
-            </label>
-            <label>
-                <input type="radio" name="ai_degen" value="green" {% if request.args.get('ai_degen') == 'green' %}checked{% endif %} onchange="document.getElementById('searchForm').submit();">
-                Green
-            </label>
+<div class="container" style="max-width: 90vw; padding: 0px;">
+    <div class="container" style="max-width: 90vw; padding: 0px;">
+        <div class="summary-container">
+          <div class="summary-item">
+            <span class="summary-label">Total calls</span>
+            <span class="summary-value" id="total">{{ summary.total }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Green calls</span>
+            <span class="summary-value" id="green-ai-degen-count">{{ summary.green }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Yellow calls</span>
+            <span class="summary-value" id="yellow-ai-degen-count">{{ summary.yellow }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Red calls</span>
+            <span class="summary-value" id="red-ai-degen-count">{{ summary.red }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Average marketcap</span>
+            <span class="summary-value" id="average-marketcap">
+              {{ summary.average_marketcap|format_currency}}
+            </span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Average calls per day</span>
+            <span class="summary-value">
+              {{ summary.average_entries_per_day|format_whole}}
+            </span>
+          </div>
         </div>
+    </div>
+
+  <div class="search-container">
+    <form action="{{ url_for('get_tokens') }}" class="search-form" method="get" id="searchForm">
+      <div class="search-input-container">
+        <input type="search" id="search-bar" name="query" placeholder="Search..." value="{{ request.args.get('query', '') }}">
+        <button type="submit" class="dither-button">Search</button>
+      </div>
+      <div class="filter-container">
+        <div class="color-filters">
+            <label class="radio-label">
+              <input type="radio" name="ai_degen" value="red" {% if request.args.get('ai_degen') == 'red' %}checked{% endif %} onchange="document.getElementById('searchForm').submit();">
+              <span class="radio-button"></span>
+              <span class="radio-text">Red</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="ai_degen" value="yellow" {% if request.args.get('ai_degen') == 'yellow' %}checked{% endif %} onchange="document.getElementById('searchForm').submit();">
+              <span class="radio-button"></span>
+              <span class="radio-text">Yellow</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="ai_degen" value="green" {% if request.args.get('ai_degen') == 'green' %}checked{% endif %} onchange="document.getElementById('searchForm').submit();">
+              <span class="radio-button"></span>
+              <span class="radio-text">Green</span>
+            </label>
+          </div>
+        <a href="{{ url_for('get_tokens', sort_by=sort_by, sort_order=sort_order) }}" class="clear-query-button">Clear Filters</a>
+      </div>
     </form>
-</div>
-<div class="token-container">
-{% if tokens %}
-<table id="token-table">
-    <thead>
-        <tr>
-            <th>Score</th>
-            <th></th>
-            <th><a href="?sort_by=name&sort_order={{ 'desc' if sort_by == 'name' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Name</a></th>
-            <th><a href="?sort_by=date&sort_order={{ 'desc' if sort_by == 'date' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Date</a></th>
-            <th><a href="?sort_by=price&sort_order={{ 'desc' if sort_by == 'price' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Price</a></th>
-            <th><a href="?sort_by=memeability&sort_order={{ 'desc' if sort_by == 'memeability' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Memeability</a></th>
-            <th><a href="?sort_by=marketcap&sort_order={{ 'desc' if sort_by == 'marketcap' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Marketcap</a></th>
-            <th><a href="?sort_by=volume&sort_order={{ 'desc' if sort_by == 'volume' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Volume 24h</a></th>
-            <th><a href="?sort_by=top_20_holders&sort_order={{ 'desc' if sort_by == 'top_20_holders' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Top 20 holders</a></th>
-            <th><a href="?sort_by=total_holders&sort_order={{ 'desc' if sort_by == 'total_holders' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Total hodlers</a></th>
-            <th><a href="?sort_by=transactions&sort_order={{ 'desc' if sort_by == 'transactions' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Transactions</a></th>
-            <th><a href="?sort_by=price_change_5min&sort_order={{ 'desc' if sort_by == 'price_change_5min' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Price change 5min</a></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for token in tokens %}
-            <tr>
+  </div>
+
+  <div class="token-container">
+    {% if tokens %}
+    <div class="table-wrapper">
+        <table id="token-table">
+            <thead>
+              <tr>
+                <th>Score</th>
+                <th></th>
+                <th><a href="?sort_by=name&sort_order={{ 'desc' if sort_by == 'name' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Name</a></th>
+                <th><a href="?sort_by=date&sort_order={{ 'desc' if sort_by == 'date' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Date</a></th>
+                <th><a href="?sort_by=price&sort_order={{ 'desc' if sort_by == 'price' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Price</a></th>
+                <th><a href="?sort_by=memeability&sort_order={{ 'desc' if sort_by == 'memeability' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Memeability</a></th>
+                <th><a href="?sort_by=marketcap&sort_order={{ 'desc' if sort_by == 'marketcap' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Marketcap</a></th>
+                <th><a href="?sort_by=volume&sort_order={{ 'desc' if sort_by == 'volume' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Volume 24h</a></th>
+                <th><a href="?sort_by=top_20_holders&sort_order={{ 'desc' if sort_by == 'top_20_holders' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Top 20 holders</a></th>
+                <th><a href="?sort_by=total_holders&sort_order={{ 'desc' if sort_by == 'total_holders' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Total hodlers</a></th>
+                <th><a href="?sort_by=transactions&sort_order={{ 'desc' if sort_by == 'transactions' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Transactions</a></th>
+                <th><a href="?sort_by=price_change_5min&sort_order={{ 'desc' if sort_by == 'price_change_5min' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Price change 5min</a></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for token in tokens %}
+              <tr>
                 <td class="degen">{{ token.ai_degen }}</td>
                 <td>
                   <a href="https://birdeye.so/token/{{ token.token }}?chain=solana" target="_blank" rel="noopener noreferrer">
@@ -73,7 +95,7 @@
                   </a>
                 </td>
                 <td>
-                    <a href="{{ url_for('token_detail', token=token.token, date=token.date) }}">{{ token.name }}</a>
+                  <a href="{{ url_for('token_detail', token=token.token, date=token.date) }}">{{ token.name }}</a>
                 </td>
                 <td>{{ datetime_friendly(token.date)['readable'] }}</td>
                 <td>{{ token.price }}</td>
@@ -84,27 +106,31 @@
                 <td>{{ token.total_holders|format_number }}</td>
                 <td>{{ token.transactions|format_number }}</td>
                 <td>{{ token.price_change_5min|format_number}}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-    <h1>No tokens found</h1>
-{% endif %}
-</div>
-<div class="pagination">
-    <p>Page {{ page }}</p>
-    {% if prev_page_url %}
-        <a href="{{ prev_page_url }}" class="pagination-button">Previous</a>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+      </div>
     {% else %}
-        <span class="pagination-button disabled">Previous</span>
+    <h1>No tokens found</h1>
+    {% endif %}
+  </div>
+
+  <div class="pagination">
+    {% if prev_page_url %}
+    <a href="{{ prev_page_url }}" class="dither-button">Previous</a>
+    {% else %}
+    <span class="dither-button disabled">Previous</span>
     {% endif %}
 
+    <p>Page {{ page }}</p>
+
     {% if next_page_url %}
-        <a href="{{ next_page_url }}" class="pagination-button">Next</a>
+    <a href="{{ next_page_url }}" class="dither-button">Next</a>
     {% else %}
-        <span class="pagination-button disabled">Next</span>
+    <span class="dither-button disabled">Next</span>
     {% endif %}
+  </div>
 </div>
 <script>
 function colorToEmoji(color) {
