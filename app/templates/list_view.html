@@ -6,19 +6,19 @@
     <div class="container" style="max-width: 90vw; padding: 0px;">
         <div class="summary-container">
           <div class="summary-item">
-            <span class="summary-label">Total calls</span>
+            <span class="summary-label">Total</span>
             <span class="summary-value" id="total">{{ summary.total }}</span>
           </div>
           <div class="summary-item">
-            <span class="summary-label">Green calls</span>
+            <span class="summary-label">Green</span>
             <span class="summary-value" id="green-ai-degen-count">{{ summary.green }}</span>
           </div>
           <div class="summary-item">
-            <span class="summary-label">Yellow calls</span>
+            <span class="summary-label">Yellow</span>
             <span class="summary-value" id="yellow-ai-degen-count">{{ summary.yellow }}</span>
           </div>
           <div class="summary-item">
-            <span class="summary-label">Red calls</span>
+            <span class="summary-label">Red</span>
             <span class="summary-value" id="red-ai-degen-count">{{ summary.red }}</span>
           </div>
           <div class="summary-item">
@@ -28,7 +28,7 @@
             </span>
           </div>
           <div class="summary-item">
-            <span class="summary-label">Average calls per day</span>
+            <span class="summary-label">Average signals per day</span>
             <span class="summary-value">
               {{ summary.average_entries_per_day|format_whole}}
             </span>
@@ -76,6 +76,7 @@
                 <th><a href="?sort_by=name&sort_order={{ 'desc' if sort_by == 'name' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Name</a></th>
                 <th><a href="?sort_by=date&sort_order={{ 'desc' if sort_by == 'date' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Date</a></th>
                 <th><a href="?sort_by=price&sort_order={{ 'desc' if sort_by == 'price' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Price</a></th>
+                <th>Current price</th>
                 <th><a href="?sort_by=memeability&sort_order={{ 'desc' if sort_by == 'memeability' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Memeability</a></th>
                 <th><a href="?sort_by=marketcap&sort_order={{ 'desc' if sort_by == 'marketcap' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Marketcap</a></th>
                 <th><a href="?sort_by=volume&sort_order={{ 'desc' if sort_by == 'volume' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Volume 24h</a></th>
@@ -95,10 +96,15 @@
                   </a>
                 </td>
                 <td>
-                  <a href="{{ url_for('token_detail', token=token.token, date=token.date) }}">{{ token.name }}</a>
+                  <a href="{{ url_for('token_detail', token=token.token, date=token.date) }}">
+                    {{ token.name }}
+                  </a>
                 </td>
                 <td>{{ datetime_friendly(token.date)['readable'] }}</td>
                 <td>{{ token.price }}</td>
+                <td style="{{ 'color: green;' if float(current[token.token]['price_usd']) > token.price else 'color: red;' }}">
+                    {{ current[token.token]['price_usd'] }}
+                </td>
                 <td>{{ token.memeability }}</td>
                 <td>{{ token.marketcap|format_currency }}</td>
                 <td>{{ token.volume|format_currency }}</td>

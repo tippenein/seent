@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 from .plot import datetime_to_epoch, get_solana_pool_address, plot_ohlc_data
 from .db import DATABASE_CONFIG, DATABASE_TYPE, DatabaseController
-
+from .token import fetch_token_data
 app = Flask(__name__)
 
 DEBUG=False
@@ -100,11 +100,14 @@ def get_tokens():
 
     tokens = db.query_db(query, parameters)
 
+    current = fetch_token_data([token['token'] for token in tokens])
+
     prev_page_url = url_for('get_tokens', page=page-1, query=search_query, ai_degen=ai_degen) if page > 1 else None
     next_page_url = url_for('get_tokens', page=page+1, query=search_query, ai_degen=ai_degen)
 
     return render_template('list_view.html',
                             tokens=tokens,
+                            current=current,
                             summary=summary[0],
                             sort_by=sort_by,
                             sort_order=sort_order,
@@ -112,6 +115,7 @@ def get_tokens():
                             prev_page_url=prev_page_url,
                             next_page_url=next_page_url,
                             page=page,
+                            float=float,
                             ai_degen=ai_degen
                             )
 
