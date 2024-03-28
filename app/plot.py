@@ -33,6 +33,24 @@ def fetch_ohlc_data(pool_address, bot_timestamp):
     else:
         return None, None
 
+def fetch_1m_data(pool_address, bot_timestamp):
+    api_url = f"https://api.geckoterminal.com/api/v2/networks/solana/pools/{pool_address}/ohlcv/minute"
+    headers = {"Accept": "application/json;version=20230302"}
+    
+    before_timestamp = int(bot_timestamp.timestamp()) + 300  # 5 minutes after bot call time
+    params = {
+        "before_timestamp": before_timestamp,
+        "limit": 10,  # Fetch 10 candlesticks (5 minutes before and 5 minutes after)
+    }
+
+    response = requests.get(api_url, headers=headers, params=params)
+    data = response.json()
+
+    if "data" in data and "meta" in data:
+        return data["data"], data["meta"]
+    else:
+        return None, None
+
 def get_time_diff_minutes(bot_timestamp):
     current_timestamp = int(time.time())
     time_diff = current_timestamp - bot_timestamp
@@ -98,24 +116,31 @@ def process_data(data):
 
     return df
 
-def plot_bot_call(ax, bot_timestamp, df):
+def plot_bot_call(ax, bot_timestamp, df, pool_address):
     star_size = 200
     star_color = 'magenta'
     border_color = 'black'
     border_width = 1
 
-    # Find the closest candle timestamp to the bot call timestamp
-    closest_timestamp = min(df['timestamp'], key=lambda x: abs(x - bot_timestamp))
-    candle = df[df['timestamp'] == closest_timestamp]
+    # Fetch 1-minute candlestick data around the bot call time
+    data_1m, meta_1m = fetch_1m_data(pool_address, bot_timestamp)
+    if data_1m:
+        df_1m = process_data(data_1m["attributes"]["ohlcv_list"])
+        closest_timestamp_1m = min(df_1m['timestamp'], key=lambda x: abs(x - bot_timestamp))
+        candle_1m = df_1m[df_1m['timestamp'] == closest_timestamp_1m]
 
-    if not candle.empty:
-        open_price = candle['open'].values[0]
-        close_price = candle['close'].values[0]
-        # high_price = candle['high'].values[0]
-        bot_price = close_price
+        if not candle_1m.empty:
+            open_price_1m = candle_1m['open'].values[0]
+            close_price_1m = candle_1m['close'].values[0]
+            bot_price = close_price_1m
+        else:
+            bot_price = None
+    else:
+        bot_price = None
 
+    if bot_price is not None:
         ax.scatter(
-            closest_timestamp,
+            bot_timestamp,
             bot_price,
             s=star_size,
             marker='*',
@@ -184,7 +209,6 @@ def get_solana_pool_address(token_address):
 
     response = requests.get(api_url, headers=headers)
     data = response.json()
-    print(data)
 
     # If override is True, return the first pool's address, if available
     if "data" in data and data["data"]:
@@ -212,7 +236,7 @@ def plot_ohlc_data(pool_address, bot_timestamp, color="unknown"):
     interval, timeframe = get_interval_and_timeframe(time_diff_minutes)
     fig, ax = plt.subplots(figsize=(12, 6))
     plot_candlesticks(ax, filtered_df, interval)
-    plot_bot_call(ax, bot_timestamp, filtered_df)
+    plot_bot_call(ax, bot_timestamp, filtered_df, pool_address)
 
     # Find the candle closest to the bot call timestamp
     closest_candle = filtered_df.iloc[np.argmin(np.abs(filtered_df['timestamp'] - bot_timestamp))]
