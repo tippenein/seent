@@ -12,3 +12,5 @@ src/__pycache__
 postgres_ready_dump.sql
 do-seery-ca-certificate.cer
 *.dump
+*.bak2
+*.sql
