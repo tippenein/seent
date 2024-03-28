@@ -121,10 +121,11 @@ def token_detail(token, date):
     bot_timestamp = int(datetime_to_epoch(date) - dt)
     pool_address = get_solana_pool_address(token)
     if pool_address is not None:
-        image, return_stats = plot_ohlc_data(pool_address, bot_timestamp)
+        image = plot_ohlc_data(pool_address, bot_timestamp)
         if image is not None:
             # Encode the image bytes to base64
-            image_base64 = base64.b64encode(image).decode('utf-8')
+            print(image)
+            image_base64 = base64.b64encode(image[0]).decode('utf-8')
             return render_template('plot.html', token=token, image=image_base64)
     else:
         print("shit")

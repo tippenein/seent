@@ -253,4 +253,4 @@ def plot_ohlc_data(pool_address, bot_timestamp, color="unknown"):
     plt.close(fig)
     output.seek(0)
 
-    return output.getvalue(), return_stats
+    return output.getvalue(),
