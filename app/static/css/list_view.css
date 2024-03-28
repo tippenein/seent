@@ -74,14 +74,25 @@ body {
 
 #token-table a {
   color: #fff;
+  border-bottom: 1px dotted #fff;
   text-decoration: none;
+}
+
+#token-table a:has(i) {
+  border-bottom: none;
 }
 
 .pagination {
   margin-top: 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  gap: 40px;
+}
+
+.pagination p {
+  margin: 0;
+  font-weight: bold;
 }
 
 .pagination-button {
