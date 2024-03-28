@@ -64,7 +64,6 @@ a {
     font-size: 18px; /* Adjust the font size as needed */
     border: 2px solid #ccc; /* Border around the search bar */
     border-radius: 5px; /* Rounded corners */
-    margin-top: 20px; /* Additional space at the top if needed */
   }
 
   /* Style the placeholder text */
@@ -75,8 +74,8 @@ a {
   /* Style the search bar on focus to make it stand out */
   #search-bar:focus {
     outline: none; /* Removes the default focus outline */
-    border-color: #00ff37; /* Changes the border color when focused */
-    box-shadow: 0 0 8px #00a123; /* Adds a glow effect */
+    border-color: rgba(0,240,255,0.004); /* Changes the border color when focused */
+    box-shadow: 0 0 8px #FF00D6; /* Adds a glow effect */
   }
 
   .search-form {
@@ -90,10 +89,9 @@ a {
     font-size: 18px; /* Adjust the font size as needed */
     border: 2px solid #ccc; /* Border around the search bar */
     border-radius: 5px; /* Rounded corners */
-    margin-top: 20px; /* Additional space at the top if needed */
   }
 
-  .submit-button {
+  .dither-button {
     padding: 10px 20px; /* Padding inside the submit button */
     font-size: 18px; /* Adjust the font size as needed */
     border: none; /* No border */
@@ -104,13 +102,13 @@ a {
     margin-left: 10px; /* Space between the search bar and the button */
   }
 
-  .submit-button:hover {
-    background-color: #00ff37; /* Darker background color on hover */
+  .dither-button:hover {
+    background-color: #FF00D6; /* Darker background color on hover */
   }
 
   /* Optional: style the submit button when it's focused or active */
-  .submit-button:focus,
-  .submit-button:active {
+  .dither-button:focus,
+  .dither-button:active {
     outline: none; /* Removes the default focus outline */
     box-shadow: 0 0 8px; /* Adds a glow effect */
   }
@@ -135,8 +133,8 @@ a {
     background-color: #00ff37; /* Darker color on hover */
 }
 
-.pagination-button.disabled {
-    background-color: #cccccc; /* Grayed out button */
+.dither-button.disabled {
+    opacity: 0.4;
     pointer-events: none; /* Disable button clicks */
     cursor: default;
 }
@@ -158,16 +156,108 @@ a {
 .summary-value {
   margin-left: 10px;
 }
-.back-button {
-  padding: 10px 20px;
-  text-decoration: none;
-  color: white;
-  background-color: #00ff37;
-  border: none;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  display: inline-block;
+
+body {
+  background-attachment: scroll;
+  background-image: url('data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%20width%3D%22512%22%20height%3D%22512%22%20preserveAspectRatio%3D%22none%22%3E%20%3Cstyle%20type%3D%22text%2Fcss%22%3E%20path%20%7B%20fill%3A%20none%3B%20stroke%3A%20rgba(255,255,255,0.027)%3B%20stroke-width%3A%202.01px%3B%20stroke-linecap%3A%20round%3B%20stroke-linejoin%3A%20round%3B%20%7D%20%3C%2Fstyle%3E%20%3Cpath%20vector-effect%3D%22non-scaling-stroke%22%20d%3D%22M424%2C331.8c0%2C12.5-6.7%2C24.1-17.5%2C30.3l-132%2C76.2c-10.8%2C6.3-24.2%2C6.3-35%2C0l-132-76.2%20C96.7%2C355.8%2C90%2C344.3%2C90%2C331.8V179.2c0-12.5%2C6.7-24.1%2C17.5-30.3l132-76.2c10.8-6.3%2C24.2-6.3%2C35%2C0l132%2C76.2%20c10.8%2C6.3%2C17.5%2C17.8%2C17.5%2C30.3V331.8z%20M238.5%2C73l-256%2C147.6%20M273.5%2C439l252.1-145.4%20M256%2C634.7V378.3c0-12.5%2C6.7-24.1%2C17.5-30.3%20l252.1-145.4%20M256-122.7v256.4c0%2C12.5-6.7%2C24.1-17.5%2C30.3l-256%2C147.6%22%2F%3E%3C%2Fsvg%3E'), linear-gradient(45deg, #242426 0%, #212124 60%);
+  background-size: 395px, auto;
+  background-position: center, 0% 0%;
+  background-repeat: repeat, repeat;
+  line-height: 1.0;
+  min-height: var(--viewport-height);
+  min-width: 320px;
+  overflow-x: hidden;
+  word-wrap: break-word;
 }
-.back-button:hover {
-  background-color: #00ff37;
+
+.footer {
+  padding: 20px 0;
+  text-align: center;
+}
+
+.footer-content {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.footer-links {
+  margin-bottom: 20px;
+}
+
+.footer-link {
+  display: inline-flex;
+  align-items: center;
+  color: #fff;
+  text-decoration: none;
+  margin: 0 15px;
+  transition: color 0.3s ease;
+  opacity: 0.7;
+}
+
+.footer-link:hover {
+  color: #ccc;
+}
+
+.footer-icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 5px;
+}
+
+.footer-disclaimer {
+  color: #888;
+  font-size: 14px;
+  margin: 0;
+}
+
+.summary-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2c2c2e;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 10px;
+}
+
+.summary-label {
+  font-size: 14px;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.summary-value {
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+}
+
+@media screen and (max-width: 768px) {
+  .summary-container {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .summary-item {
+    flex-basis: 50%;
+    margin-bottom: 10px;
+  }
+}
+
+.seery-title {
+  background-image: linear-gradient(45deg, #FF00D6 0%, rgba(0, 240, 255, 1) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.seery-title:hover {
+  color: #FF00D6;
 }

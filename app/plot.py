@@ -137,13 +137,13 @@ def configure_plot(ax, pool_address, meta, interval, timeframe, color=""):
     ax.xaxis.set_major_locator(mdates.AutoDateLocator())
     plt.xticks(rotation=45, ha='right')
 
-    ax.set_xlabel("Time")
-    ax.set_ylabel(f"Price (USD)")
-    ax.set_title(f"{interval_str} price for {base_symbol}/{quote_str} pool")
+    ax.set_xlabel("Time", color="white")
+    ax.set_ylabel(f"Price (USD)", color="white")
+    ax.set_title(f"{interval_str} price for {base_symbol}/{quote_str} pool", color="white")
     ax.legend()
 
-    ax.grid(which="major", linestyle="-", linewidth=0.5, color="gray", alpha=0.7)
-    ax.grid(which="minor", linestyle="--", linewidth=0.25, color="gray", alpha=0.4)
+    ax.grid(which="major", linestyle="-", linewidth=0.5, color="gray", alpha=0.3)
+    ax.grid(which="minor", linestyle="--", linewidth=0.25, color="gray", alpha=0.2)
     ax.minorticks_on()
 
     handles, labels = ax.get_legend_handles_labels()
@@ -154,6 +154,22 @@ def configure_plot(ax, pool_address, meta, interval, timeframe, color=""):
         else:
             new_handles.append(handle)
     ax.legend(new_handles, labels)
+
+    # Set dark background and text colors
+    fig = ax.figure
+    fig.set_facecolor("#121212")
+    ax.set_facecolor("#121212")
+    ax.spines['bottom'].set_color('white')
+    ax.spines['top'].set_color('white')
+    ax.spines['left'].set_color('white')
+    ax.spines['right'].set_color('white')
+    ax.tick_params(axis='x', colors='white')
+    ax.tick_params(axis='y', colors='white')
+    ax.yaxis.label.set_color('white')
+    ax.xaxis.label.set_color('white')
+    ax.title.set_color('white')
+    ax.legend(facecolor='#121212', edgecolor='white', labelcolor='white')
+
     filename = f"{base_symbol}.png"
     return filename
 
@@ -195,7 +211,7 @@ def plot_ohlc_data(pool_address, bot_timestamp, color="unknown"):
     time_diff_minutes = get_time_diff_minutes(bot_timestamp.timestamp())
     interval, timeframe = get_interval_and_timeframe(time_diff_minutes)
     fig, ax = plt.subplots(figsize=(12, 6))
-    plot_candlesticks(ax, filtered_df, interval)  # Pass the interval to plot_candlesticks
+    plot_candlesticks(ax, filtered_df, interval)
     plot_bot_call(ax, bot_timestamp, filtered_df)
 
     # Find the candle closest to the bot call timestamp
@@ -236,4 +252,5 @@ def plot_ohlc_data(pool_address, bot_timestamp, color="unknown"):
     FigureCanvas(fig).print_png(output)
     plt.close(fig)
     output.seek(0)
-    return output.getvalue()
+
+    return output.getvalue(), return_stats

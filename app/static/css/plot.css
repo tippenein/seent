@@ -1,0 +1,33 @@
+.chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.chart-wrapper {
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.back-button {
+    margin-bottom: 10px;
+    align-self: flex-start;
+}
+
+.chart-image {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media screen and (max-width: 600px) {
+    .chart-container {
+        padding: 10px;
+    }
+}
