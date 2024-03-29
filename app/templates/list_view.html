@@ -77,6 +77,7 @@
                 <th><a href="?sort_by=date&sort_order={{ 'desc' if sort_by == 'date' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Date</a></th>
                 <th><a href="?sort_by=price&sort_order={{ 'desc' if sort_by == 'price' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Price</a></th>
                 <th>Current price</th>
+                <th>% Change</th>
                 <th><a href="?sort_by=memeability&sort_order={{ 'desc' if sort_by == 'memeability' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Memeability</a></th>
                 <th><a href="?sort_by=marketcap&sort_order={{ 'desc' if sort_by == 'marketcap' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Marketcap</a></th>
                 <th><a href="?sort_by=volume&sort_order={{ 'desc' if sort_by == 'volume' and sort_order == 'asc' else 'asc' }}{{ '&ai_degen=' + ai_degen if ai_degen else ''}}">Volume 24h</a></th>
@@ -105,6 +106,9 @@
                 <td style="{{ 'color: #26A69A;' if float(current[token.token]['price_usd']) > token.price else 'color: #EF5350;' }}">
                     {{ current[token.token]['price_usd'] }}
                 </td>
+                <td style="{{ 'color: #26A69A;' if float(current[token.token]['price_usd']) > float(token.price) else 'color: #EF5350;' }}">
+                  {{ (((float(current[token.token]['price_usd']) - float(token.price)) / float(token.price)) * 100) | round(2) }}%
+                </td>                
                 <td>{{ token.memeability }}</td>
                 <td>{{ token.marketcap|format_currency }}</td>
                 <td>{{ token.volume|format_currency }}</td>
