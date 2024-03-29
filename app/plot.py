@@ -37,7 +37,7 @@ def fetch_1m_data(pool_address, bot_timestamp):
     api_url = f"https://api.geckoterminal.com/api/v2/networks/solana/pools/{pool_address}/ohlcv/minute"
     headers = {"Accept": "application/json;version=20230302"}
     
-    before_timestamp = int(bot_timestamp.timestamp()) + 300  # 5 minutes after bot call time
+    before_timestamp = int(bot_timestamp.timestamp()) + 300  # 5 minutes after bot signal time
     params = {
         "before_timestamp": before_timestamp,
         "limit": 10,  # Fetch 10 candlesticks (5 minutes before and 5 minutes after)
@@ -122,7 +122,7 @@ def plot_bot_call(ax, bot_timestamp, df, pool_address):
     border_color = 'black'
     border_width = 1
 
-    # Fetch 1-minute candlestick data around the bot call time
+    # Fetch 1-minute candlestick data around the bot signal time
     data_1m, meta_1m = fetch_1m_data(pool_address, bot_timestamp)
     if data_1m:
         df_1m = process_data(data_1m["attributes"]["ohlcv_list"])
@@ -147,7 +147,7 @@ def plot_bot_call(ax, bot_timestamp, df, pool_address):
             color=star_color,
             edgecolors=border_color,
             linewidths=border_width,
-            label=f'Seer Call {bot_price:.5f}',
+            label=f'Seer Signal {bot_price:.5f}',
             zorder=3
         )
 
@@ -174,7 +174,7 @@ def configure_plot(ax, pool_address, meta, interval, timeframe, color=""):
     handles, labels = ax.get_legend_handles_labels()
     new_handles = []
     for handle, label in zip(handles, labels):
-        if label == "Seer Call":
+        if label == "Seer Signal":
             new_handles.append(plt.Line2D([], [], marker='*', markersize=13, color='magenta', markeredgecolor='black', markeredgewidth=1, linestyle='None'))
         else:
             new_handles.append(handle)
