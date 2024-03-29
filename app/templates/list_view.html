@@ -102,7 +102,7 @@
                 </td>
                 <td>{{ datetime_friendly(token.date)['readable'] }}</td>
                 <td>{{ token.price }}</td>
-                <td style="{{ 'color: green;' if float(current[token.token]['price_usd']) > token.price else 'color: red;' }}">
+                <td style="{{ 'color: #26A69A;' if float(current[token.token]['price_usd']) > token.price else 'color: #EF5350;' }}">
                     {{ current[token.token]['price_usd'] }}
                 </td>
                 <td>{{ token.memeability }}</td>
