@@ -3,6 +3,7 @@
 a seer bot history fetching tool
 
 ## setup
+
 ```
 python -m venv venv
 . venv/bin/activate
@@ -24,13 +25,15 @@ python app.py
 after you have the db, you can run the app with `python3 application.py`
 
 # DB
-An example query you might call on to find the green calls and when they were called
+
+An example query you might call on to find the green signals and when they were emitted
 
 ```sql
 SELECT name || ': ' || strftime('%m-%d %H:%M:%S', date) AS formatted_name_date FROM token_data WHERE ai_degen = 'green' GROUP BY name, date ORDER BY date ASC;
 ```
 
-get a specific tickers call data
+get a specific tickers signal data
+
 ```sql
 SELECT * from token_data where name LIKE '%WADDUP%';
 ```

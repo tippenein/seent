@@ -261,3 +261,33 @@ body {
 .seery-title:hover {
   color: #FF00D6;
 }
+
+.card {
+  background-color: #2c2c2e;
+  border-radius: 20px;
+  padding: 10px;
+  color: white;
+  width: 200px
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.percent-gain {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #28a745;
+}
+
+.text-muted {
+  font-size: 0.875rem;
+}
+
+.cards-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px;
+}
