@@ -260,3 +260,17 @@ body {
     font-size: 16px;
     color: #fff;
   }
+
+  .banner {
+    background-color: #2c2c2e;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.banner p {
+    margin: 0;
+    font-size: 14px;
+    color: #fff;
+}

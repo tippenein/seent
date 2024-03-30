@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 style="color: white;">Top Signals</h1>
+    <div class="cards-wrapper row">
+        {% for token in tokens %}
+        <div class="md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">{{ token.name.replace("$", "") }}</h5>
+                    <p class="card-text">
+                        <span class="percent-gain">
+                            {{ (((float(current[token.token]['price_usd']) - float(token.price)) / float(token.price)) * 100) | round(2) }}%
+                        </span>
+                    </p>
+                    <p class="card-text">
+                        <small class="text-muted">{{ datetime_friendly(token.date)['readable'] }}</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

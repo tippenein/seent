@@ -43,7 +43,36 @@ def health():
 
 @app.route('/')
 def home():
-    return redirect(url_for('get_tokens'))
+    top_signals = ['3psH1Mj1f7yUfaD5gh6Zj7epE8hhrMkMETgv5TshQA4o',
+                   'Av6qVigkb7USQyPXJkUvAEm4f599WTRvd75PUWBA9eNm',
+                   'GRFKaABC518SqXMvBpAVYUZtVT3Nj4mYk7E7xU4gA5Rg',
+                   'Bf6xK9vFfKqUW6844zHQz9oq689nDZqizugxT5patYBy',
+                   '7bQsj9DciGXs6cTkhB3D1WbcEjuMpmD7amQRWjEVBpu',
+                   'ukHH6c7mMyiWCf1b9pnWe25TSpkDDt3H5pQZgZ74J82',
+                   'D8r8XTuCrUhLheWeGXSwC3G92RhASficV3YA7B2XWcLv']
+
+    query = "SELECT * FROM token_data WHERE token IN ({})".format(', '.join(['?' if DATABASE_TYPE == 'sqlite' else '%s'] * len(top_signals)))
+    tokens = db.query_db(query, top_signals)
+
+    # Filter the list of tokens to keep only the latest row for each token
+    latest_tokens = {}
+    for token in tokens:
+        if token['token'] not in latest_tokens or token['date'] > latest_tokens[token['token']]['date']:
+            latest_tokens[token['token']] = token
+
+    tokens = list(latest_tokens.values())
+
+    current = fetch_token_data([token['token'] for token in tokens])
+
+    def datetime_friendly(dt):
+        datetime_obj = datetime.strptime(dt, DB_TIME_FORMAT)
+        return {'readable': datetime_obj.strftime(READABLE_TIME_FORMAT), 'dt': datetime_obj}
+
+    return render_template('home.html',
+                           tokens=tokens,
+                           current=current,
+                           datetime_friendly=datetime_friendly,
+                           float=float)
 
 @app.route('/tokens')
 def get_tokens():
