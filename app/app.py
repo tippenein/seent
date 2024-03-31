@@ -43,36 +43,7 @@ def health():
 
 @app.route('/')
 def home():
-    top_signals = ['3psH1Mj1f7yUfaD5gh6Zj7epE8hhrMkMETgv5TshQA4o',
-                   'Av6qVigkb7USQyPXJkUvAEm4f599WTRvd75PUWBA9eNm',
-                   'GRFKaABC518SqXMvBpAVYUZtVT3Nj4mYk7E7xU4gA5Rg',
-                   'Bf6xK9vFfKqUW6844zHQz9oq689nDZqizugxT5patYBy',
-                   '7bQsj9DciGXs6cTkhB3D1WbcEjuMpmD7amQRWjEVBpu',
-                   'ukHH6c7mMyiWCf1b9pnWe25TSpkDDt3H5pQZgZ74J82',
-                   'D8r8XTuCrUhLheWeGXSwC3G92RhASficV3YA7B2XWcLv']
-
-    query = "SELECT * FROM token_data WHERE token IN ({})".format(', '.join(['?' if DATABASE_TYPE == 'sqlite' else '%s'] * len(top_signals)))
-    tokens = db.query_db(query, top_signals)
-
-    # Filter the list of tokens to keep only the latest row for each token
-    latest_tokens = {}
-    for token in tokens:
-        if token['token'] not in latest_tokens or token['date'] > latest_tokens[token['token']]['date']:
-            latest_tokens[token['token']] = token
-
-    tokens = list(latest_tokens.values())
-
-    current = fetch_token_data([token['token'] for token in tokens])
-
-    def datetime_friendly(dt):
-        datetime_obj = datetime.strptime(dt, DB_TIME_FORMAT)
-        return {'readable': datetime_obj.strftime(READABLE_TIME_FORMAT), 'dt': datetime_obj}
-
-    return render_template('home.html',
-                           tokens=tokens,
-                           current=current,
-                           datetime_friendly=datetime_friendly,
-                           float=float)
+    return redirect(url_for("get_tokens"))
 
 @app.route('/tokens')
 def get_tokens():
@@ -88,7 +59,6 @@ def get_tokens():
 
     def datetime_friendly(dt):
         datetime_obj = datetime.strptime(dt, DB_TIME_FORMAT)
-
         return {'readable': datetime_obj.strftime(READABLE_TIME_FORMAT), 'dt': datetime_obj}
 
     summary = db.query_db("""SELECT
@@ -112,7 +82,7 @@ def get_tokens():
         else:
             query = f"SELECT * FROM token_data WHERE name ILIKE %(search_query)s"
     else:
-        parameters = {'limit': per_page, 'offset': offset }
+        parameters = {'limit': per_page, 'offset': offset}
 
         where_clause = ""
         if ai_degen is not None:
@@ -131,6 +101,31 @@ def get_tokens():
 
     current = fetch_token_data([token['token'] for token in tokens])
 
+    # Fetch data for top signals
+    top_signals = ['3psH1Mj1f7yUfaD5gh6Zj7epE8hhrMkMETgv5TshQA4o',
+                   'Av6qVigkb7USQyPXJkUvAEm4f599WTRvd75PUWBA9eNm',
+                   'GRFKaABC518SqXMvBpAVYUZtVT3Nj4mYk7E7xU4gA5Rg',
+                   'Bf6xK9vFfKqUW6844zHQz9oq689nDZqizugxT5patYBy',
+                   '7bQsj9DciGXs6cTkhB3D1WbcEjuMpmD7amQRWjEVBpu',
+                   'ukHH6c7mMyiWCf1b9pnWe25TSpkDDt3H5pQZgZ74J82',
+                   'D8r8XTuCrUhLheWeGXSwC3G92RhASficV3YA7B2XWcLv',
+                   'T1oYbAejEESrZLtSAjumAXhzFqZGNxQ4kVN9vPUoxMv',
+                   '2xP43MawHfU7pwPUmvkc6AUWg4GX8xPQLTGMkSZfCEJT',
+                   'G3q2zUkuxDCXMnhdBPujjPHPw9UTMDbXqzcc2UHM3jiy']
+
+    top_signals_query = "SELECT * FROM token_data WHERE token IN ({})".format(', '.join(['?' if DATABASE_TYPE == 'sqlite' else '%s'] * len(top_signals)))
+    top_signals_tokens = db.query_db(top_signals_query, top_signals)
+
+    # Filter the list of top signals tokens to keep only the latest row for each token
+    latest_top_signals = {}
+    for token in top_signals_tokens:
+        if token['token'] not in latest_top_signals or token['date'] > latest_top_signals[token['token']]['date']:
+            latest_top_signals[token['token']] = token
+
+    top_signals_tokens = list(latest_top_signals.values())
+
+    top_signals_current = fetch_token_data([token['token'] for token in top_signals_tokens])
+
     prev_page_url = url_for('get_tokens', page=page-1, query=search_query, ai_degen=ai_degen) if page > 1 else None
     next_page_url = url_for('get_tokens', page=page+1, query=search_query, ai_degen=ai_degen)
 
@@ -145,7 +140,9 @@ def get_tokens():
                             next_page_url=next_page_url,
                             page=page,
                             float=float,
-                            ai_degen=ai_degen
+                            ai_degen=ai_degen,
+                            top_signals_tokens=top_signals_tokens,
+                            top_signals_current=top_signals_current
                             )
 
 @app.route('/tokens/<token>/<date>')

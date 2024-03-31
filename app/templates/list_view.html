@@ -36,6 +36,29 @@
         </div>
     </div>
 
+  <div class="container" style="margin: 0; width: 100%; max-width: unset;">
+      <h1 class="seery-title">Top Signals</h1>
+      <div class="cards-wrapper row">
+          {% for token in top_signals_tokens %}
+          <div class="md-4">
+              <div class="card mb-4">
+                  <div class="card-body">
+                      <h5 class="card-title">{{ token.name.replace("$", "") }}</h5>
+                      <p class="card-text">
+                          <span class="percent-gain">
+                              {{ (((float(top_signals_current[token.token]['price_usd']) - float(token.price)) / float(token.price)) * 100) | round(2) }}%
+                          </span>
+                      </p>
+                      <p class="card-text">
+                          <small class="text-muted">{{ datetime_friendly(token.date)['readable'] }}</small>
+                      </p>
+                  </div>
+              </div>
+          </div>
+          {% endfor %}
+      </div>
+  </div>
+
   <div class="search-container">
     <form action="{{ url_for('get_tokens') }}" class="search-form" method="get" id="searchForm">
       <div class="search-input-container">

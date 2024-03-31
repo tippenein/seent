@@ -288,6 +288,7 @@ body {
 .cards-wrapper {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
   gap: 20px;
+  overflow-x: scroll;
+  width: 100%;
 }
