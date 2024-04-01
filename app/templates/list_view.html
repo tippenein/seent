@@ -133,8 +133,11 @@
                     {{ current[token.token]['price_usd'] }}
                 </td>
                 <td style="{{ 'color: #26A69A;' if float(current[token.token]['price_usd']) > float(token.price) else 'color: #EF5350;' }}">
-                  {{ (((float(current[token.token]['price_usd']) - float(token.price)) / float(token.price)) * 100) | round(2) }}%
-                </td>                
+
+                  {% if float(token.price) > 0.0 %}
+                    {{ (((float(current[token.token]['price_usd']) - float(token.price)) / float(token.price)) * 100) | round(2) }}%
+                  {% endif %}
+                </td>
                 <td>{{ token.memeability }}</td>
                 <td>{{ token.marketcap|format_currency }}</td>
                 <td>{{ token.volume|format_currency }}</td>
