@@ -13,13 +13,9 @@ cp .env.example .env
 
 Then fill in you api id/hash from my.telegram.com along with your phone number
 
-```python
+```
 # this fetches the telegram history
-python runner.py
-```
-
-```
-python app.py
+make scrape
 ```
 
 after you have the db, you can run the app with `python3 application.py`
