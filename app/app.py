@@ -54,7 +54,6 @@ def home():
 @app.route('/tokens')
 def get_tokens():
     search_query = request.args.get('query', '')
-    print(request.args)
 
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 20, type=int)
