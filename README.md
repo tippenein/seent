@@ -11,7 +11,7 @@ pip install -r requirements.pip
 cp .env.example .env
 ```
 
-Then fill in you api id/hash from my.telegram.com along with your phone number
+Then fill in you api id/hash from [my.telegram.org](my.telegram.org) along with your phone number
 
 ```
 # this fetches the telegram history
