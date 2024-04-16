@@ -100,7 +100,6 @@ def parse_token_data(raw_text):
     data['ai_degen_yellow'] = ai_degen_yellow
     ai_degen_red_match = ai_degen_red_pattern.search(raw_text)
     ai_degen_red = float(ai_degen_red_match.group(1)) if ai_degen_red_match else None
-    print(ai_degen_death, ai_degen_green, ai_degen_yellow, ai_degen_red)
     data['ai_degen_red'] = ai_degen_red
     data['ai_degen'] = get_max_degen({'death': ai_degen_death,
        'red': ai_degen_red,
