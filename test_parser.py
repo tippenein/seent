@@ -11,7 +11,11 @@ class TestTokenDataParsing(unittest.TestCase):
 
         📊Ratings📊
         Memeability: 9.4/10
-        AI Degen: 🟡 - Yellow
+        AI Degen:
+        ☠️ - Death 10.12%
+        🔴 - Red 82.23%
+        🟡 - Yellow 12.12%
+        🟢 - Green 0.02%
         Name Originality: 5.8/10
         Description Originality: 10/10
 
@@ -48,8 +52,13 @@ class TestTokenDataParsing(unittest.TestCase):
         data = parse_token_data(self.text)
         self.assertEqual(data['memeability'], 9.4)
         self.assertEqual(data['name_originality'], 5.8)
-        self.assertEqual(data['ai_degen'], 'yellow')
         self.assertEqual(data['description_originality'], 10.0)
+
+        self.assertEqual(data['ai_degen_death'],  10.12)
+        self.assertEqual(data['ai_degen_red'], 82.23)
+        self.assertEqual(data['ai_degen_yellow'], 12.12)
+        self.assertEqual(data['ai_degen_green'], 0.02)
+
 
     def test_millions(self):
         data = parse_token_data("Volume: $139.78M")

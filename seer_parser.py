@@ -1,18 +1,15 @@
 import re
 
-def degen_color(emoji):
-    if emoji:
-        # Convert the Unicode emoji to the color name
-        if emoji == '🔴':
-            return 'red'
-        elif emoji == '🟡':
-            return 'yellow'
-        elif emoji == '🟢':
-            return 'green'
-        else:
-            return 'unknown'  # Default case if the emoji is not recognized
-    else:
+def get_max_degen(degen_dict):
+    # Filter out None values
+    filtered_dict = {k: v for k, v in degen_dict.items() if v is not None}
+    if not filtered_dict:
+        # Return None or a default value if all values were None
         return None
+    # Find the key with the maximum value
+    max_key = max(filtered_dict, key=filtered_dict.get)
+    return max_key
+
 
 def parse_marketcap(marketcap_str):
     # This function converts a marketcap string like "$6.20k" to a float value
@@ -41,7 +38,6 @@ def parse_token_data(raw_text):
 
     price_pattern = re.compile(r'Price: \$(\S+)')
     memeability_pattern = re.compile(r'Memeability: ([\d.]+)/10')
-    ai_degen_pattern = re.compile(r'AI Degen: (\S+)')
     top_holders_pattern = re.compile(r'Top 20 Holders: ([\d.]+)')
     total_holders_pattern = re.compile(r'Total Holders: (\d+)')
     transactions_pattern = re.compile(r'Transactions: (\d+)')
@@ -87,8 +83,30 @@ def parse_token_data(raw_text):
     else:
         data['description_originality'] = None
 
-    ai_degen_match = ai_degen_pattern.search(raw_text)
-    data['ai_degen'] = degen_color(ai_degen_match.group(1)) if ai_degen_match else None
+    # AI DEGEN
+    ai_degen_death_pattern = re.compile(r'.*Death ([\d.]+)\%')
+    ai_degen_red_pattern = re.compile(r'.*Red ([\d.]+)\%')
+    ai_degen_yellow_pattern = re.compile(r'.*Yellow ([\d.]+)\%')
+    ai_degen_green_pattern = re.compile(r'.*Green ([\d.]+)\%')
+
+    ai_degen_death_match = ai_degen_death_pattern.search(raw_text)
+    ai_degen_death = float(ai_degen_death_match.group(1)) if ai_degen_death_match else None
+    data['ai_degen_death'] = ai_degen_death
+    ai_degen_green_match = ai_degen_green_pattern.search(raw_text)
+    ai_degen_green = float(ai_degen_green_match.group(1)) if ai_degen_green_match else None
+    data['ai_degen_green'] = ai_degen_green
+    ai_degen_yellow_match = ai_degen_yellow_pattern.search(raw_text)
+    ai_degen_yellow = float(ai_degen_yellow_match.group(1)) if ai_degen_yellow_match else None
+    data['ai_degen_yellow'] = ai_degen_yellow
+    ai_degen_red_match = ai_degen_red_pattern.search(raw_text)
+    ai_degen_red = float(ai_degen_red_match.group(1)) if ai_degen_red_match else None
+    print(ai_degen_death, ai_degen_green, ai_degen_yellow, ai_degen_red)
+    data['ai_degen_red'] = ai_degen_red
+    data['ai_degen'] = get_max_degen({'death': ai_degen_death,
+       'red': ai_degen_red,
+       'yellow': ai_degen_yellow,
+       'green': ai_degen_green
+      })
     # Search for matches in the raw text
     token_match = token_pattern.search(raw_text)
     data['token'] = token_match.group(1) if token_match else None

@@ -71,6 +71,10 @@ def setup_db(conn):
             description_originality REAL,
             volume integer,
             ai_degen TEXT,
+            ai_degen_death REAL,
+            ai_degen_red REAL,
+            ai_degen_yellow REAL,
+            ai_degen_green REAL,
             top_20_holders REAL,
             total_holders INTEGER,
             transactions INTEGER,
@@ -92,12 +96,12 @@ def insert(conn, data, date, id):
             cursor.execute('''
             INSERT INTO token_data (
                 id, date, token, name, price, marketcap, liquidity, memeability, name_originality,
-                description_originality, volume, ai_degen, top_20_holders,
-                total_holders, transactions, price_change_5min
+                description_originality, volume, ai_degen, ai_degen_death, ai_degen_green,
+                ai_degen_red, ai_degen_yellow, top_20_holders, total_holders, transactions, price_change_5min
             ) VALUES (
                 :id, :date, :token, :name, :price, :marketcap, :liquidity, :memeability, :name_originality,
-                :description_originality, :volume, :ai_degen, :top_20_holders,
-                :total_holders, :transactions, :price_change_5min
+                :description_originality, :volume, :ai_degen, :ai_degen_death, :ai_degen_green, :ai_degen_red,
+                :ai_degen_yellow, :top_20_holders, :total_holders, :transactions, :price_change_5min
             )
             ''', {'id': id, 'date': date, **data})
 
