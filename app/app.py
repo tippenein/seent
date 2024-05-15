@@ -113,10 +113,9 @@ def get_tokens():
                    'Bf6xK9vFfKqUW6844zHQz9oq689nDZqizugxT5patYBy',
                    '7bQsj9DciGXs6cTkhB3D1WbcEjuMpmD7amQRWjEVBpu',
                    'ukHH6c7mMyiWCf1b9pnWe25TSpkDDt3H5pQZgZ74J82',
-                   'D8r8XTuCrUhLheWeGXSwC3G92RhASficV3YA7B2XWcLv',
                    'T1oYbAejEESrZLtSAjumAXhzFqZGNxQ4kVN9vPUoxMv',
-                   '2xP43MawHfU7pwPUmvkc6AUWg4GX8xPQLTGMkSZfCEJT',
-                   'G3q2zUkuxDCXMnhdBPujjPHPw9UTMDbXqzcc2UHM3jiy']
+                   '2xP43MawHfU7pwPUmvkc6AUWg4GX8xPQLTGMkSZfCEJT'
+                   ]
 
     top_signals_query = "SELECT * FROM token_data WHERE token IN ({})".format(', '.join(['?' if DATABASE_TYPE == 'sqlite' else '%s'] * len(top_signals)))
     top_signals_tokens = db.query_db(top_signals_query, top_signals)
